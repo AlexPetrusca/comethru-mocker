@@ -40,7 +40,6 @@ build/
 *.iml
 *.ipr
 out/
-target/
 
 # VS Code
 .vscode/
@@ -79,8 +78,3 @@ docker-compose.override.yml
 *.swp
 *.swo
 *~
-
-#######################################
-# H2
-#######################################
-mocker.mv.db

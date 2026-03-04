@@ -1,0 +1,1 @@
+export { PhoneSimulatorScreen } from './PhoneSimulatorScreen';
