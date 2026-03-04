@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
 import { PhoneDisplay, MessageBubble } from '../components';
 import { messagesService, Message } from '../services/messages';
 import { verificationService } from '../services/verification';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import StorageKeys from "@/src/constants/StorageKeys";
 
 interface PhoneSimulatorScreenProps {
   initialNumber?: string;
@@ -24,6 +26,17 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
   const [verifyStatus, setVerifyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [requestCodeStatus, setRequestCodeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  useEffect(() => {
+    async function fetchPhoneNumber() {
+      return await AsyncStorage.getItem(StorageKeys.PHONE_NUMBER_KEY);
+    }
+    fetchPhoneNumber().then((number) => {
+      if (number != null && number.length > 0) {
+        setPhoneNumber(number);
+      }
+    });
+  }, []);
 
   const loadMessages = async () => {
     try {

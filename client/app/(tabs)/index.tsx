@@ -1,5 +1,5 @@
 import { PhoneSimulatorScreen } from '@/src/screens';
 
-export default function TabOneScreen() {
+export default function SimulatorTabScreen() {
   return <PhoneSimulatorScreen />;
 }

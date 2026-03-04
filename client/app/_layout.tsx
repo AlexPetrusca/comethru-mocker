@@ -2,10 +2,14 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import StorageKeys from "@/src/constants/StorageKeys";
+import { api } from "@/src/services/api";
+import { StorageProvider } from "@/src/contexts/StorageContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -21,9 +25,25 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [fontLoaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        const savedApiUrl = await AsyncStorage.getItem(StorageKeys.API_URL_KEY);
+        if (savedApiUrl != null) {
+          api.defaults.baseURL = savedApiUrl;
+        }
+      } finally {
+        setAppIsReady(true);
+      }
+    };
+
+    initializeApp();
+  }, []);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -31,12 +51,12 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (fontLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontLoaded]);
 
-  if (!loaded) {
+  if (!appIsReady || !fontLoaded) {
     return null;
   }
 
@@ -47,11 +67,13 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <StorageProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+      </ThemeProvider>
+    </StorageProvider>
   );
 }

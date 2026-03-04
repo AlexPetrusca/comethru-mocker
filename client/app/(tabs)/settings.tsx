@@ -1,30 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from "@/src/services/api";
+import { useStorage } from "@/src/contexts/StorageContext";
+import StorageKeys from "@/src/constants/StorageKeys";
 
-const API_URL_KEY = '@comethru_api_url';
-const PHONE_NUMBER_KEY = '@comethru_phone_number';
-
-export default function TabTwoScreen() {
-  const [apiUrl, setApiUrl] = useState(api.defaults.baseURL);
+export default function SettingsTabScreen() {
+  const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState('+15550000000');
 
-  const handleSaveApiUrl = async () => {
-    try {
-      await AsyncStorage.setItem(API_URL_KEY, apiUrl as string);
-      Alert.alert('Success', 'API URL saved!');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save API URL');
+  const { storage, setItem } = useStorage();
+
+  useEffect(() => {
+    const savedPhoneNumber = storage[StorageKeys.PHONE_NUMBER_KEY];
+    const savedApiUrl = storage[StorageKeys.API_URL_KEY];
+    if (savedPhoneNumber != null) {
+      setPhoneNumber(savedPhoneNumber);
     }
-  };
+    if (savedApiUrl != null) {
+      setApiUrl(savedApiUrl);
+    }
+  }, []);
 
   const handleSavePhoneNumber = async () => {
     try {
-      await AsyncStorage.setItem(PHONE_NUMBER_KEY, phoneNumber);
+      await setItem(StorageKeys.PHONE_NUMBER_KEY, phoneNumber);
       Alert.alert('Success', 'Phone number saved!');
     } catch (error) {
       Alert.alert('Error', 'Failed to save phone number');
+    }
+  };
+
+  const handleSaveApiUrl = async () => {
+    try {
+      await setItem(StorageKeys.API_URL_KEY, apiUrl);
+      api.defaults.baseURL = apiUrl;
+      Alert.alert('Success', 'API URL saved!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save API URL');
     }
   };
 

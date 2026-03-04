@@ -42,7 +42,7 @@ client/
 │   ├── (tabs)/              # Tab-based navigation
 │   │   ├── _layout.tsx      # Tab layout configuration
 │   │   ├── index.tsx        # Phone Simulator screen
-│   │   └── two.tsx          # Settings screen
+│   │   └── settings.tsx          # Settings screen
 │   └── _layout.tsx          # Root layout
 ├── src/
 │   ├── components/          # Reusable UI components
