@@ -76,7 +76,7 @@ export default function ComposeScreen() {
             style={[styles.input, styles.messageInput]}
             value={body}
             onChangeText={setBody}
-            placeholder="Type your message"
+            placeholder="Write a message..."
             multiline
             textAlignVertical="top"
           />
