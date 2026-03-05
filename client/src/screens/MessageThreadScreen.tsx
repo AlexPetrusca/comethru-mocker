@@ -53,7 +53,7 @@ export default function MessageThreadScreen() {
   if (!currentNumber || loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#007AFF"/>
       </View>
     );
   }

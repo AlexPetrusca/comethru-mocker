@@ -75,7 +75,7 @@ export default function ConversationsScreen() {
             />
           )}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
           }
         />
       )}

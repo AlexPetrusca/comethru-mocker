@@ -65,7 +65,7 @@ export function PhoneSimulatorScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number" />
+      <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number"/>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Send Message</Text>
@@ -87,7 +87,8 @@ export function PhoneSimulatorScreen() {
           <Text style={styles.buttonText}>Send</Text>
         </TouchableOpacity>
         {sendStatus && (
-          <Text style={[styles.statusMessage, sendStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
+          <Text
+            style={[styles.statusMessage, sendStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
             {sendStatus.message}
           </Text>
         )}

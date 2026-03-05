@@ -1,7 +1,6 @@
 import React from 'react';
 import { SymbolView } from 'expo-symbols';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
 import { Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
 
