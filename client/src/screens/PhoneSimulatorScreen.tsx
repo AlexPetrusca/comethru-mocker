@@ -5,7 +5,7 @@ import { Message, messagesService } from '../services/messages';
 import StorageKey from "@/src/constants/StorageKey";
 import { useSubscribe } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
-import { useUpdateEffect } from "@/src/hooks/UpdateEffect";
+import { useUpdateEffect } from "@/src/hooks/useUpdateEffect";
 import { useStorage } from "@/src/providers/StorageProvider";
 import { PhoneNumber } from "@/src/constants";
 

@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
+import { useColorScheme } from '@/src/hooks/useColorScheme';
 import StorageKey from "@/src/constants/StorageKey";
 import { api } from "@/src/services/api";
 import { StorageProvider, useStorage } from "@/src/providers/StorageProvider";
@@ -27,7 +27,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const { storage } = useStorage();
   const [fontLoaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [appIsReady, setAppIsReady] = useState(false);
 

@@ -4,8 +4,7 @@ import { Link, Tabs } from 'expo-router';
 import { Platform, Pressable } from 'react-native';
 
 import Colors from '@/src/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useColorScheme } from '@/src/hooks/useColorScheme';
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
@@ -13,8 +12,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme].tint,
-                headerShown: useClientOnlyValue(false, true),
+                tabBarActiveTintColor: Colors[colorScheme].tint
             }}>
             <Tabs.Screen
                 name="index"
