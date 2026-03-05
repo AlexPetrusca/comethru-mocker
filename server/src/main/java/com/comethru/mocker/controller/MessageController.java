@@ -47,6 +47,11 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessagesBetween(from, to));
     }
 
+    @GetMapping("/conversations/{phoneNumber}")
+    public ResponseEntity<List<MessageService.ConversationSummary>> getConversations(@PathVariable String phoneNumber) {
+        return ResponseEntity.ok(messageService.getConversationsForPhoneNumber(phoneNumber));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
         if (!messageService.deleteMessage(id)) {
