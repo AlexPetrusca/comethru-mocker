@@ -7,14 +7,11 @@ import { useSubscribe } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
 import { useUpdateEffect } from "@/src/hooks/UpdateEffect";
 import { useStorage } from "@/src/providers/StorageProvider";
+import { PhoneNumber } from "@/src/constants";
 
-interface PhoneSimulatorScreenProps {
-  initialNumber?: string;
-}
-
-export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSimulatorScreenProps) {
+export function PhoneSimulatorScreen() {
   const { storage } = useStorage();
-  const [phoneNumber, setPhoneNumber] = useState(initialNumber);
+  const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
   const [recipientNumber, setRecipientNumber] = useState('');
   const [messageBody, setMessageBody] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);

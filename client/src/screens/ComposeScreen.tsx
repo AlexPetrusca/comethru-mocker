@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { messagesService } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
-import StorageKey from '@/src/constants/StorageKey';
+import { StorageKey, PhoneNumber } from "@/src/constants";
 
 export default function ComposeScreen() {
   const router = useRouter();
@@ -22,7 +14,7 @@ export default function ComposeScreen() {
   const [body, setBody] = useState('');
 
   React.useEffect(() => {
-    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
+    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   }, [storage]);
 
   const handleSend = async () => {

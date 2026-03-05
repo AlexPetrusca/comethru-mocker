@@ -7,14 +7,13 @@ import { useSubscribe } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
 import { messagesService } from "@/src/services/messages";
 import { useStorage } from "@/src/providers/StorageProvider";
+import { PhoneNumber } from "@/src/constants";
 
-interface AdminScreenProps {
-    initialNumber?: string;
-}
 
-export default function AdminTabScreen({ initialNumber = '+15550000000' }: AdminScreenProps) {
+
+export default function AdminTabScreen() {
     const { storage } = useStorage();
-    const [phoneNumber, setPhoneNumber] = useState(initialNumber);
+    const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
     const [verificationCode, setVerificationCode] = useState('');
     const [verifyStatus, setVerifyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [requestCodeStatus, setRequestCodeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -34,7 +33,7 @@ export default function AdminTabScreen({ initialNumber = '+15550000000' }: Admin
     const handleSendVerification = async () => {
         try {
             await verificationService.send({ to: phoneNumber });
-            const messages = await messagesService.getBetween("777777", phoneNumber); // todo: extract 777777
+            const messages = await messagesService.getBetween(PhoneNumber.VERIFICATION, phoneNumber);
 
             const lastMessage = messages[messages.length - 1];
             const match = lastMessage.body.match(/\d{6}/);

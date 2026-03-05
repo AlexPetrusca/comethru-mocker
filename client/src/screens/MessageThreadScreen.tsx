@@ -5,6 +5,7 @@ import { MessageThread } from '@/src/components';
 import { messagesService, Message } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
 import StorageKey from '@/src/constants/StorageKey';
+import { PhoneNumber } from "@/src/constants";
 
 export default function MessageThreadScreen() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function MessageThreadScreen() {
   }, [currentNumber, otherParty]);
 
   useEffect(() => {
-    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
+    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   }, [storage]);
 
   useEffect(() => {

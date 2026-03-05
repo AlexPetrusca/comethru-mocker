@@ -5,6 +5,7 @@ import { ConversationListItem } from '@/src/components';
 import { messagesService, Conversation } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
 import StorageKey from '@/src/constants/StorageKey';
+import { PhoneNumber } from "@/src/constants";
 
 export default function ConversationsScreen() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function ConversationsScreen() {
   };
 
   useEffect(() => {
-    setPhoneNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
+    setPhoneNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   }, [storage]);
 
   useEffect(() => {

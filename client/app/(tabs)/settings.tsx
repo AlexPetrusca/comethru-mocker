@@ -5,10 +5,11 @@ import { useStorage } from "@/src/providers/StorageProvider";
 import StorageKey from "@/src/constants/StorageKey";
 import { usePublish } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
+import { PhoneNumber } from "@/src/constants";
 
 export default function SettingsTabScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
-  const [phoneNumber, setPhoneNumber] = useState('+15550000000');
+  const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
   const publish = usePublish();
 
   const { storage, setItem } = useStorage();
@@ -69,7 +70,7 @@ export default function SettingsTabScreen() {
           style={styles.input}
           value={phoneNumber}
           onChangeText={setPhoneNumber}
-          placeholder="+15550000000"
+          placeholder={PhoneNumber.DEFAULT}
           keyboardType="phone-pad"
         />
         <TouchableOpacity style={styles.button} onPress={handleSavePhoneNumber}>
