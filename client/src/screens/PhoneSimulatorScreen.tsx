@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { MessageBubble, PhoneDisplay } from '../components';
 import { Message, messagesService } from '../services/messages';
-import { verificationService } from '../services/verification';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StorageKey from "@/src/constants/StorageKey";
 import { useSubscribe } from "@/src/providers/PubSubContext";
@@ -18,10 +17,7 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
   const [recipientNumber, setRecipientNumber] = useState('');
   const [messageBody, setMessageBody] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [verifyStatus, setVerifyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [requestCodeStatus, setRequestCodeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // on mount
   useEffect(() => {
@@ -71,44 +67,8 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
       setMessageBody('');
       await loadMessages();
       setSendStatus({ type: 'success', message: 'Message sent!' });
-      setRequestCodeStatus(null);
-      setVerifyStatus(null);
     } catch (error) {
       setSendStatus({ type: 'error', message: 'Failed to send message' });
-    }
-  };
-
-  const handleSendVerification = async () => {
-    try {
-      await verificationService.send({ to: phoneNumber });
-      setRequestCodeStatus({ type: 'success', message: 'Verification code sent!' });
-      setSendStatus(null);
-      setVerifyStatus(null);
-    } catch (error) {
-      setRequestCodeStatus({ type: 'error', message: 'Failed to send verification code' });
-    }
-  };
-
-  const handleVerifyCode = async () => {
-    if (!verificationCode) {
-      setVerifyStatus({ type: 'error', message: 'Please enter verification code' });
-      return;
-    }
-
-    try {
-      const result = await verificationService.verify({
-        to: phoneNumber,
-        code: verificationCode,
-      });
-      if (result.valid) {
-        setVerifyStatus({ type: 'success', message: 'Code verified successfully!' });
-      } else {
-        setVerifyStatus({ type: 'error', message: result.message || 'Invalid or expired code' });
-      }
-      setSendStatus(null);
-      setRequestCodeStatus(null);
-    } catch (error) {
-      setVerifyStatus({ type: 'error', message: 'Failed to verify code' });
     }
   };
 
@@ -138,33 +98,6 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
         {sendStatus && (
           <Text style={[styles.statusMessage, sendStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
             {sendStatus.message}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Verification Code</Text>
-        <TouchableOpacity style={styles.button} onPress={handleSendVerification}>
-          <Text style={styles.buttonText}>Request Code</Text>
-        </TouchableOpacity>
-        {requestCodeStatus && (
-          <Text style={[styles.statusMessage, requestCodeStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
-            {requestCodeStatus.message}
-          </Text>
-        )}
-        <TextInput
-          style={styles.input}
-          placeholder="Enter code"
-          value={verificationCode}
-          onChangeText={setVerificationCode}
-          keyboardType="number-pad"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleVerifyCode}>
-          <Text style={styles.buttonText}>Verify</Text>
-        </TouchableOpacity>
-        {verifyStatus && (
-          <Text style={[styles.statusMessage, verifyStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
-            {verifyStatus.message}
           </Text>
         )}
       </View>
@@ -230,7 +163,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   statusMessage: {
-    marginTop: 8,
+    marginBottom: 12,
     padding: 10,
     borderRadius: 6,
     fontSize: 14,
