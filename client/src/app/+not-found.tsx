@@ -1,1 +1,1 @@
-export { NotFoundScreen } from '@/src/screens';
+export { NotFoundScreen as default } from '@/src/screens';

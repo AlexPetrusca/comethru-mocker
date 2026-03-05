@@ -1,1 +1,1 @@
-export { ComposeScreen } from '@/src/screens';
+export { ComposeScreen as default } from '@/src/screens';

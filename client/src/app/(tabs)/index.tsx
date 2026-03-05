@@ -1,5 +1,1 @@
-import { ConversationsScreen } from '@/src/screens';
-
-export default function SimulatorTabScreen() {
-  return <ConversationsScreen/>;
-}
+export { ConversationsScreen as default } from "@/src/screens";
