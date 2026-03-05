@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { messagesService } from '@/src/services/messages';
-import { useStorage } from '@/src/providers/StorageProvider';
+import { messagesService } from '@/src/services';
+import { useStorage } from '@/src/providers';
 import { StorageKey, PhoneNumber } from "@/src/constants";
 
 export default function ComposeScreen() {

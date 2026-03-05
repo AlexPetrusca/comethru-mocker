@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ConversationListItem } from '@/src/components';
-import { messagesService, Conversation } from '@/src/services/messages';
-import { useStorage } from '@/src/providers/StorageProvider';
-import StorageKey from '@/src/constants/StorageKey';
-import { PhoneNumber } from "@/src/constants";
+import { messagesService, Conversation } from '@/src/services';
+import { useStorage } from '@/src/providers';
+import { PhoneNumber, StorageKey } from "@/src/constants";
 
 export default function ConversationsScreen() {
   const router = useRouter();

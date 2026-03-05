@@ -1,9 +1,9 @@
 import { createContext } from "react";
 
-export type StorageData = Record<string, string | null>;
+export type StorageContextData = Record<string, string | null>;
 
 export type StorageContextType = {
-    storage: StorageData;
+    storage: StorageContextData;
     setItem: (key: string, value: string) => Promise<void>;
     removeItem: (key: string) => Promise<void>;
 };

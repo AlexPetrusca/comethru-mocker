@@ -1,1 +1,1 @@
-export { default } from '@/src/screens/MessageThreadScreen';
+export { MessageThreadScreen } from '@/src/screens';

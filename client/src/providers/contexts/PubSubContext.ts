@@ -1,6 +1,5 @@
-import PubSubEvent from "@/src/constants/PubSubEvent";
-import PubSubPayload from "@/src/constants/PubSubPayload";
 import { createContext } from "react";
+import { PubSubEvent, PubSubPayload } from "@/src/constants";
 
 const listeners: Record<string, Function[]> = {};
 

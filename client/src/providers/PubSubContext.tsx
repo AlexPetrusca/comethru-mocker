@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, ReactNode } from 'react';
-import PubSubEvent from "@/src/constants/PubSubEvent";
-import PubSubPayload from "@/src/constants/PubSubPayload";
-import { PubSub, PubSubContext } from "@/src/providers/contexts/PubSubContext";
+import { PubSubPayload, PubSubEvent } from "@/src/constants";
+import { PubSub, PubSubContext } from "@/src/providers/contexts";
 
 export const PubSubProvider = ({ children }: { children: ReactNode }) => {
     return (

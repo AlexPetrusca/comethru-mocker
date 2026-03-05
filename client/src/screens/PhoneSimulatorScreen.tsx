@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import { MessageBubble, PhoneDisplay } from '../components';
-import { Message, messagesService } from '../services/messages';
-import StorageKey from "@/src/constants/StorageKey";
-import { useSubscribe } from "@/src/providers/PubSubContext";
-import PubSubEvent from "@/src/constants/PubSubEvent";
-import { useUpdateEffect } from "@/src/hooks/useUpdateEffect";
-import { useStorage } from "@/src/providers/StorageProvider";
-import { PhoneNumber } from "@/src/constants";
+import { MessageBubble, PhoneDisplay } from '@/src/components';
+import { Message, messagesService } from '@/src/services';
+import { useUpdateEffect } from "@/src/hooks";
+import { useStorage, useSubscribe } from "@/src/providers";
+import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 
 export function PhoneSimulatorScreen() {
   const { storage } = useStorage();

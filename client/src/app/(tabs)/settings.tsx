@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { api } from "@/src/services/api";
-import { useStorage } from "@/src/providers/StorageProvider";
-import StorageKey from "@/src/constants/StorageKey";
-import { usePublish } from "@/src/providers/PubSubContext";
-import PubSubEvent from "@/src/constants/PubSubEvent";
-import { PhoneNumber } from "@/src/constants";
+import { api } from "@/src/services";
+import { useStorage, usePublish } from "@/src/providers";
+import { StorageKey, PubSubEvent, PhoneNumber } from "@/src/constants";
 
 export default function SettingsTabScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);

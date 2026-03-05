@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
-import { verificationService } from '@/src/services/verification';
-import StorageKey from "@/src/constants/StorageKey";
-import { useSubscribe } from "@/src/providers/PubSubContext";
-import PubSubEvent from "@/src/constants/PubSubEvent";
-import { messagesService } from "@/src/services/messages";
-import { useStorage } from "@/src/providers/StorageProvider";
-import { PhoneNumber } from "@/src/constants";
-
-
+import { verificationService, messagesService } from '@/src/services';
+import { StorageKey, PhoneNumber, PubSubEvent } from "@/src/constants";
+import { useStorage, useSubscribe } from "@/src/providers";
 
 export default function AdminTabScreen() {
     const { storage } = useStorage();
     const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
     const [verificationCode, setVerificationCode] = useState('');
     const [verifyStatus, setVerifyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-    const [requestCodeStatus, setRequestCodeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+    const [requestCodeStatus, setRequestCodeStatus] = useState<{
+        type: 'success' | 'error';
+        message: string
+    } | null>(null);
 
     // on mount
     useEffect(() => {
@@ -69,7 +66,7 @@ export default function AdminTabScreen() {
 
     return (
         <ScrollView style={styles.container}>
-            <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number" />
+            <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number"/>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Verification Code</Text>
@@ -77,7 +74,8 @@ export default function AdminTabScreen() {
                     <Text style={styles.buttonText}>Request Code</Text>
                 </TouchableOpacity>
                 {requestCodeStatus && (
-                    <Text style={[styles.statusMessage, requestCodeStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
+                    <Text
+                        style={[styles.statusMessage, requestCodeStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
                         {requestCodeStatus.message}
                     </Text>
                 )}
@@ -92,7 +90,8 @@ export default function AdminTabScreen() {
                     <Text style={styles.buttonText}>Verify</Text>
                 </TouchableOpacity>
                 {verifyStatus && (
-                    <Text style={[styles.statusMessage, verifyStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
+                    <Text
+                        style={[styles.statusMessage, verifyStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
                         {verifyStatus.message}
                     </Text>
                 )}

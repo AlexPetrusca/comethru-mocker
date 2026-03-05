@@ -1,4 +1,4 @@
-import PubSubEvent from "@/src/constants/PubSubEvent";
+import { PubSubEvent } from "@/src/constants";
 
 interface PubSubPayload {
     [PubSubEvent.API_URL_CHANGED]: string;

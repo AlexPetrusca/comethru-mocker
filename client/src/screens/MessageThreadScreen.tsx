@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { MessageThread } from '@/src/components';
-import { messagesService, Message } from '@/src/services/messages';
-import { useStorage } from '@/src/providers/StorageProvider';
-import StorageKey from '@/src/constants/StorageKey';
-import { PhoneNumber } from "@/src/constants";
+import { messagesService, Message } from '@/src/services';
+import { useStorage } from '@/src/providers';
+import { PhoneNumber, StorageKey } from "@/src/constants";
 
 export default function MessageThreadScreen() {
   const router = useRouter();
