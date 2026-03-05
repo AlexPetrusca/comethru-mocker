@@ -1,5 +1,5 @@
-import { PhoneSimulatorScreen } from '@/src/screens';
+import { ConversationsScreen } from '@/src/screens';
 
 export default function SimulatorTabScreen() {
-  return <PhoneSimulatorScreen />;
+  return <ConversationsScreen />;
 }

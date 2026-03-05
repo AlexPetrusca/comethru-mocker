@@ -8,6 +8,13 @@ export interface Message {
   sentAt: string;
 }
 
+export interface Conversation {
+  otherParty: string;
+  messageCount: number;
+  lastMessage: string;
+  lastMessageAt: string;
+}
+
 export interface SendMessageRequest {
   from: string;
   to: string;
@@ -22,6 +29,11 @@ export const messagesService = {
 
   async getAll(): Promise<Message[]> {
     const response = await api.get<Message[]>('/messages');
+    return response.data;
+  },
+
+  async getConversations(phoneNumber: string): Promise<Conversation[]> {
+    const response = await api.get<Conversation[]>(`/messages/conversations/${phoneNumber}`);
     return response.data;
   },
 
