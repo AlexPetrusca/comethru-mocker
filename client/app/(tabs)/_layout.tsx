@@ -55,8 +55,8 @@ export default function TabLayout() {
                         <SymbolView
                             name={{
                                 ios: 'person.fill',
-                                android: 'admin_panel_settings',
-                                web: 'admin_panel_settings',
+                                android: 'person',
+                                web: 'person',
                             }}
                             tintColor={color}
                             size={28}
