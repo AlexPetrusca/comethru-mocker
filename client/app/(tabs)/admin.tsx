@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
 import { verificationService } from '@/src/services/verification';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import StorageKey from "@/src/constants/StorageKey";
 import { useSubscribe } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
 import { messagesService } from "@/src/services/messages";
+import { useStorage } from "@/src/providers/StorageProvider";
 
 interface AdminScreenProps {
     initialNumber?: string;
 }
 
 export default function AdminTabScreen({ initialNumber = '+15550000000' }: AdminScreenProps) {
+    const { storage } = useStorage();
     const [phoneNumber, setPhoneNumber] = useState(initialNumber);
     const [verificationCode, setVerificationCode] = useState('');
     const [verifyStatus, setVerifyStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -20,14 +21,10 @@ export default function AdminTabScreen({ initialNumber = '+15550000000' }: Admin
 
     // on mount
     useEffect(() => {
-        async function fetchPhoneNumber() {
-            return await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY);
+        const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
+        if (savedNumber != null) {
+            setPhoneNumber(savedNumber);
         }
-        fetchPhoneNumber().then((savedPhoneNumber) => {
-            if (savedPhoneNumber != null) {
-                setPhoneNumber(savedPhoneNumber);
-            }
-        });
     }, []);
 
     useSubscribe(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {

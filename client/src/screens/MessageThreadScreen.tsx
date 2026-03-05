@@ -5,11 +5,10 @@ import { MessageThread } from '@/src/components';
 import { messagesService, Message } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
 import StorageKey from '@/src/constants/StorageKey';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MessageThreadScreen() {
-  const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const router = useRouter();
+  const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const { storage } = useStorage();
   const [currentNumber, setCurrentNumber] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,12 +27,7 @@ export default function MessageThreadScreen() {
   }, [currentNumber, otherParty]);
 
   useEffect(() => {
-    const loadPhoneNumber = async () => {
-      const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
-      const number = savedNumber || (await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY)) || '+15550000000';
-      setCurrentNumber(number);
-    };
-    loadPhoneNumber();
+    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
   }, [storage]);
 
   useEffect(() => {

@@ -12,23 +12,17 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { messagesService } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
 import StorageKey from '@/src/constants/StorageKey';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ComposeScreen() {
-  const { to } = useLocalSearchParams<{ to?: string }>();
   const router = useRouter();
   const { storage } = useStorage();
+  const { to } = useLocalSearchParams<{ to?: string }>();
   const [currentNumber, setCurrentNumber] = useState<string>('');
   const [recipient, setRecipient] = useState(to || '');
   const [body, setBody] = useState('');
 
   React.useEffect(() => {
-    const loadPhoneNumber = async () => {
-      const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
-      const number = savedNumber || (await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY)) || '+15550000000';
-      setCurrentNumber(number);
-    };
-    loadPhoneNumber();
+    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
   }, [storage]);
 
   const handleSend = async () => {

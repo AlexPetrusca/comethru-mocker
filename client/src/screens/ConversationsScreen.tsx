@@ -5,7 +5,6 @@ import { ConversationListItem } from '@/src/components';
 import { messagesService, Conversation } from '@/src/services/messages';
 import { useStorage } from '@/src/providers/StorageProvider';
 import StorageKey from '@/src/constants/StorageKey';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ConversationsScreen() {
   const router = useRouter();
@@ -25,12 +24,7 @@ export default function ConversationsScreen() {
   };
 
   useEffect(() => {
-    const loadPhoneNumber = async () => {
-      const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
-      const number = savedNumber || (await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY)) || '+15550000000';
-      setPhoneNumber(number);
-    };
-    loadPhoneNumber();
+    setPhoneNumber(storage[StorageKey.PHONE_NUMBER_KEY] || '+15550000000');
   }, [storage]);
 
   useEffect(() => {

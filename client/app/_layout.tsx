@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import StorageKey from "@/src/constants/StorageKey";
 import { api } from "@/src/services/api";
-import { StorageProvider } from "@/src/providers/StorageProvider";
+import { StorageProvider, useStorage } from "@/src/providers/StorageProvider";
 import { PubSubProvider } from "@/src/providers/PubSubContext";
 
 export {
@@ -26,23 +25,21 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  const { storage } = useStorage();
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        const savedApiUrl = await AsyncStorage.getItem(StorageKey.API_URL_KEY);
-        if (savedApiUrl != null) {
-          api.defaults.baseURL = savedApiUrl;
-        }
-      } finally {
-        setAppIsReady(true);
+    try {
+      const savedApiUrl = storage[StorageKey.API_URL_KEY];
+      if (savedApiUrl != null) {
+        api.defaults.baseURL = savedApiUrl;
       }
-    };
-    initializeApp();
+    } finally {
+      setAppIsReady(true);
+    }
   }, []);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.

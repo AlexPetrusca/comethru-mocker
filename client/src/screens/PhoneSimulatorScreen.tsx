@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { MessageBubble, PhoneDisplay } from '../components';
 import { Message, messagesService } from '../services/messages';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import StorageKey from "@/src/constants/StorageKey";
 import { useSubscribe } from "@/src/providers/PubSubContext";
 import PubSubEvent from "@/src/constants/PubSubEvent";
 import { useUpdateEffect } from "@/src/hooks/UpdateEffect";
+import { useStorage } from "@/src/providers/StorageProvider";
 
 interface PhoneSimulatorScreenProps {
   initialNumber?: string;
 }
 
 export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSimulatorScreenProps) {
+  const { storage } = useStorage();
   const [phoneNumber, setPhoneNumber] = useState(initialNumber);
   const [recipientNumber, setRecipientNumber] = useState('');
   const [messageBody, setMessageBody] = useState('');
@@ -21,14 +22,10 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
 
   // on mount
   useEffect(() => {
-    async function fetchPhoneNumber() {
-      return await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY);
+    const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
+    if (savedNumber != null) {
+      setPhoneNumber(savedNumber);
     }
-    fetchPhoneNumber().then((savedPhoneNumber) => {
-      if (savedPhoneNumber != null) {
-        setPhoneNumber(savedPhoneNumber);
-      }
-    });
   }, []);
 
   useSubscribe(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
