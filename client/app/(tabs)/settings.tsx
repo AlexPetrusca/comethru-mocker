@@ -48,9 +48,6 @@ export default function SettingsTabScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <View style={styles.separator} />
-
       <View style={styles.section}>
         <Text style={styles.label}>API URL</Text>
         <TextInput
