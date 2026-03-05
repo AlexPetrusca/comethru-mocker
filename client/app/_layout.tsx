@@ -7,9 +7,10 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import StorageKeys from "@/src/constants/StorageKeys";
+import StorageKey from "@/src/constants/StorageKey";
 import { api } from "@/src/services/api";
-import { StorageProvider } from "@/src/contexts/StorageContext";
+import { StorageProvider } from "@/src/providers/StorageProvider";
+import { PubSubProvider } from "@/src/providers/PubSubContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -33,7 +34,7 @@ export default function RootLayout() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        const savedApiUrl = await AsyncStorage.getItem(StorageKeys.API_URL_KEY);
+        const savedApiUrl = await AsyncStorage.getItem(StorageKey.API_URL_KEY);
         if (savedApiUrl != null) {
           api.defaults.baseURL = savedApiUrl;
         }
@@ -41,7 +42,6 @@ export default function RootLayout() {
         setAppIsReady(true);
       }
     };
-
     initializeApp();
   }, []);
 
@@ -67,13 +67,15 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <StorageProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-      </ThemeProvider>
-    </StorageProvider>
+    <PubSubProvider>
+      <StorageProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+          </Stack>
+        </ThemeProvider>
+      </StorageProvider>
+    </PubSubProvider>
   );
 }

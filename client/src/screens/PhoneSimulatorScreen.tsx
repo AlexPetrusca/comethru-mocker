@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
-import { PhoneDisplay, MessageBubble } from '../components';
-import { messagesService, Message } from '../services/messages';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { MessageBubble, PhoneDisplay } from '../components';
+import { Message, messagesService } from '../services/messages';
 import { verificationService } from '../services/verification';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import StorageKeys from "@/src/constants/StorageKeys";
+import StorageKey from "@/src/constants/StorageKey";
+import { useSubscribe } from "@/src/providers/PubSubContext";
+import PubSubEvent from "@/src/constants/PubSubEvent";
+import { useUpdateEffect } from "@/src/hooks/UpdateEffect";
 
 interface PhoneSimulatorScreenProps {
   initialNumber?: string;
@@ -27,18 +23,28 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
   const [sendStatus, setSendStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [requestCodeStatus, setRequestCodeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // on mount
   useEffect(() => {
     async function fetchPhoneNumber() {
-      return await AsyncStorage.getItem(StorageKeys.PHONE_NUMBER_KEY);
+      return await AsyncStorage.getItem(StorageKey.PHONE_NUMBER_KEY);
     }
-    fetchPhoneNumber().then((number) => {
-      if (number != null && number.length > 0) {
-        setPhoneNumber(number);
+    fetchPhoneNumber().then((savedPhoneNumber) => {
+      if (savedPhoneNumber != null) {
+        setPhoneNumber(savedPhoneNumber);
       }
     });
   }, []);
 
+  useSubscribe(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
+    setPhoneNumber(phoneNumber);
+  });
+
+  useUpdateEffect(() => {
+    loadMessages();
+  }, [phoneNumber]);
+
   const loadMessages = async () => {
+    console.log("LOADING MESSAGES:", phoneNumber);
     try {
       const allMessages = await messagesService.getAll();
       const filtered = allMessages.filter(
@@ -105,10 +111,6 @@ export function PhoneSimulatorScreen({ initialNumber = '+15550000000' }: PhoneSi
       setVerifyStatus({ type: 'error', message: 'Failed to verify code' });
     }
   };
-
-  React.useEffect(() => {
-    loadMessages();
-  }, [phoneNumber]);
 
   return (
     <ScrollView style={styles.container}>

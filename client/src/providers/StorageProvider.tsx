@@ -1,19 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-type StorageData = Record<string, string | null>;
-
-type StorageContextType = {
-    storage: StorageData;
-    setItem: (key: string, value: string) => Promise<void>;
-    removeItem: (key: string) => Promise<void>;
-};
-
-const StorageContext = createContext<StorageContextType>({
-    storage: {},
-    setItem: async () => {},
-    removeItem: async () => {},
-});
+import { StorageContext, StorageData } from "@/src/providers/contexts/StorageContext";
 
 export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [storage, setStorage] = useState<StorageData>({});

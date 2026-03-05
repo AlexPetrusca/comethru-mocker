@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { api } from "@/src/services/api";
-import { useStorage } from "@/src/contexts/StorageContext";
-import StorageKeys from "@/src/constants/StorageKeys";
+import { useStorage } from "@/src/providers/StorageProvider";
+import StorageKey from "@/src/constants/StorageKey";
+import { usePublish } from "@/src/providers/PubSubContext";
+import PubSubEvent from "@/src/constants/PubSubEvent";
 
 export default function SettingsTabScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState('+15550000000');
+  const publish = usePublish();
 
   const { storage, setItem } = useStorage();
 
+  // on mount
   useEffect(() => {
-    const savedPhoneNumber = storage[StorageKeys.PHONE_NUMBER_KEY];
-    const savedApiUrl = storage[StorageKeys.API_URL_KEY];
+    const savedPhoneNumber = storage[StorageKey.PHONE_NUMBER_KEY];
+    const savedApiUrl = storage[StorageKey.API_URL_KEY];
     if (savedPhoneNumber != null) {
       setPhoneNumber(savedPhoneNumber);
     }
@@ -23,7 +27,8 @@ export default function SettingsTabScreen() {
 
   const handleSavePhoneNumber = async () => {
     try {
-      await setItem(StorageKeys.PHONE_NUMBER_KEY, phoneNumber);
+      await setItem(StorageKey.PHONE_NUMBER_KEY, phoneNumber);
+      publish(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber);
       Alert.alert('Success', 'Phone number saved!');
     } catch (error) {
       Alert.alert('Error', 'Failed to save phone number');
@@ -32,7 +37,8 @@ export default function SettingsTabScreen() {
 
   const handleSaveApiUrl = async () => {
     try {
-      await setItem(StorageKeys.API_URL_KEY, apiUrl);
+      await setItem(StorageKey.API_URL_KEY, apiUrl);
+      publish(PubSubEvent.API_URL_CHANGED, apiUrl);
       api.defaults.baseURL = apiUrl;
       Alert.alert('Success', 'API URL saved!');
     } catch (error) {
