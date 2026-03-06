@@ -9,7 +9,7 @@ import { PhoneNumber, StorageKey } from "@/src/constants";
 export default function ConversationsScreen() {
   const router = useRouter();
   const { storage } = useStorage();
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [phoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -22,10 +22,6 @@ export default function ConversationsScreen() {
       console.error('Failed to load conversations:', error);
     }
   };
-
-  useEffect(() => {
-    setPhoneNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
-  }, [storage]);
 
   useEffect(() => {
     if (phoneNumber) {

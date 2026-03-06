@@ -26,6 +26,7 @@ export default function RootLayout() {
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [themeLoaded, setThemeLoaded] = useState(false);
+  const [initialStorage, setInitialStorage] = useState({})
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -43,7 +44,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     const initializeApp = async () => {
-      const savedApiUrl = await AsyncStorage.getItem(StorageKey.API_URL_KEY);
+      const keys = await AsyncStorage.getAllKeys();
+      const entries = await AsyncStorage.multiGet(keys);
+      const data: Record<string, string | null> = {};
+      entries.forEach(([key, value]) => { data[key] = value; });
+      setInitialStorage(data);
+
+      const savedApiUrl = data[StorageKey.API_URL_KEY];
       if (savedApiUrl != null) {
         api.defaults.baseURL = savedApiUrl;
       }
@@ -65,10 +72,10 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return <RootLayoutNav initialStorage={initialStorage} />;
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, string | null> }) {
   const { colorScheme } = useNativeWindColorScheme();
   const theme = themeColors[colorScheme || ThemeMode.LIGHT];
 
@@ -86,7 +93,7 @@ function RootLayoutNav() {
 
   return (
     <PubSubProvider>
-      <StorageProvider>
+      <StorageProvider initialData={initialStorage}>
         <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
           <View className="flex-1 bg-white dark:bg-gray-900">
             <Stack>

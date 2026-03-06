@@ -7,29 +7,13 @@ import { useColorScheme } from 'nativewind';
 import { brandColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
-  const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
-  const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
-  const [themeMode, setThemeMode] = useState<ThemeMode>(ThemeMode.SYSTEM);
+  const { storage, setItem } = useStorage();
+  const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL_KEY] || api.defaults.baseURL);
+  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
+  const [themeMode, setThemeMode] = useState(storage[StorageKey.THEME_KEY] || ThemeMode.SYSTEM);
 
   const deviceColorScheme = useDeviceColorScheme();
   const { setColorScheme } = useColorScheme();
-
-  const { storage, setItem } = useStorage();
-
-  useEffect(() => {
-    const savedPhoneNumber = storage[StorageKey.PHONE_NUMBER_KEY];
-    const savedApiUrl = storage[StorageKey.API_URL_KEY];
-    const savedTheme = storage[StorageKey.THEME_KEY] as ThemeMode | null;
-    if (savedPhoneNumber != null) {
-      setPhoneNumber(savedPhoneNumber);
-    }
-    if (savedApiUrl != null) {
-      setApiUrl(savedApiUrl);
-    }
-    if (savedTheme != null) {
-      setThemeMode(savedTheme);
-    }
-  }, []);
 
   const handleSavePhoneNumber = async () => {
     try {

@@ -8,7 +8,7 @@ import { brandColors } from "@/src/constants/Colors";
 
 export default function AdminPanelScreen() {
   const { storage } = useStorage();
-  const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
+  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [verificationCode, setVerificationCode] = useState('');
   const [verifyStatus, setVerifyStatus] = useState<{
     type: 'success' | 'error';
@@ -18,13 +18,6 @@ export default function AdminPanelScreen() {
     type: 'success' | 'error';
     message: string
   } | null>(null);
-
-  useEffect(() => {
-    const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
-    if (savedNumber != null) {
-      setPhoneNumber(savedNumber);
-    }
-  }, []);
 
   useSubscribe(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
     setPhoneNumber(phoneNumber);

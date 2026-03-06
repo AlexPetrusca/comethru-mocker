@@ -2,24 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageContext, StorageContextData } from "@/src/providers/contexts";
 
-export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [storage, setStorage] = useState<StorageContextData>({});
-
-  // Load all keys on mount
-  useEffect(() => {
-    const loadStorage = async () => {
-      const keys = await AsyncStorage.getAllKeys();
-      const entries = await AsyncStorage.multiGet(keys);
-      const initialData: StorageContextData = {};
-      entries.forEach(([key, value]) => {
-        initialData[key] = value;
-      });
-      // setStorage(initialData);
-      setStorage((prev) => ({ ...prev, ...initialData }));
-    };
-
-    loadStorage();
-  }, []);
+export const StorageProvider: React.FC<{
+  children: React.ReactNode,
+  initialData?: Record<string, string | null>
+}> = ({ children, initialData = {} }) => {
+  const [storage, setStorage] = useState<StorageContextData>(initialData);
 
   const setItem = async (key: string, value: string) => {
     await AsyncStorage.setItem(key, value);
