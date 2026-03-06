@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View, Switch } from 'react-native';
 import { api } from "@/src/services";
-import { useStorage, usePublish } from "@/src/providers";
-import { useColorScheme } from "@/src/hooks";
-import { StorageKey, PubSubEvent, PhoneNumber } from "@/src/constants";
+import { useStorage } from "@/src/providers";
+import { StorageKey, PhoneNumber } from "@/src/constants";
+import { useColorScheme } from 'nativewind';
 import { brandColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
-  const publish = usePublish();
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const { storage, setItem } = useStorage();
@@ -29,7 +28,6 @@ export default function SettingsScreen() {
   const handleSavePhoneNumber = async () => {
     try {
       await setItem(StorageKey.PHONE_NUMBER_KEY, phoneNumber);
-      publish(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber);
       Alert.alert('Success', 'Phone number saved!');
     } catch (error) {
       Alert.alert('Error', 'Failed to save phone number');
@@ -39,7 +37,6 @@ export default function SettingsScreen() {
   const handleSaveApiUrl = async () => {
     try {
       await setItem(StorageKey.API_URL_KEY, apiUrl);
-      publish(PubSubEvent.API_URL_CHANGED, apiUrl);
       api.defaults.baseURL = apiUrl;
       Alert.alert('Success', 'API URL saved!');
     } catch (error) {
@@ -49,7 +46,9 @@ export default function SettingsScreen() {
 
   const handleToggleTheme = async () => {
     try {
-      await toggleColorScheme();
+      const newTheme = isDark ? 'light' : 'dark';
+      setColorScheme(newTheme);
+      await setItem(StorageKey.THEME_KEY, newTheme);
     } catch (error) {
       Alert.alert('Error', 'Failed to toggle theme');
     }

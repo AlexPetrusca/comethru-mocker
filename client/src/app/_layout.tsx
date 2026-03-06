@@ -24,10 +24,21 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { setColorScheme } = useNativeWindColorScheme();
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    const loadTheme = async () => {
+      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME_KEY);
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        setColorScheme(savedTheme);
+      }
+    };
+    loadTheme();
+  }, [setColorScheme]);
 
   useEffect(() => {
     const initializeApp = async () => {
