@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View, Switch } from 'react-native';
 import { api } from "@/src/services";
 import { useStorage, usePublish } from "@/src/providers";
-import { StorageKey, PubSubEvent, PhoneNumber, brandColors } from "@/src/constants";
 import { useColorScheme } from "@/src/hooks";
+import { StorageKey, PubSubEvent, PhoneNumber } from "@/src/constants";
+import { brandColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);

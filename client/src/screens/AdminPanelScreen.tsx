@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
 import { verificationService, messagesService } from '@/src/services';
-import { StorageKey, PhoneNumber, PubSubEvent, brandColors } from "@/src/constants";
+import { StorageKey, PhoneNumber, PubSubEvent } from "@/src/constants";
 import { useStorage, useSubscribe } from "@/src/providers";
+import { brandColors } from "@/src/constants/Colors";
 
 export default function AdminPanelScreen() {
   const { storage } = useStorage();

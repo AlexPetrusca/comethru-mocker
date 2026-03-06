@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Platform } from 'react-
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { messagesService } from '@/src/services';
 import { useStorage } from '@/src/providers';
-import { StorageKey, PhoneNumber, brandColors } from "@/src/constants";
+import { StorageKey, PhoneNumber } from "@/src/constants";
+import { brandColors } from "@/src/constants/Colors";
 
 export default function ComposeScreen() {
   const router = useRouter();

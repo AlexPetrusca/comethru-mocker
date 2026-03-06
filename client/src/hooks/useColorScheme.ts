@@ -1,7 +1,7 @@
 import { useColorScheme as useDeviceColorScheme } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
-import { useStorage } from "@/src/providers";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKey } from '@/src/constants';
 
 export type ColorScheme = 'light' | 'dark';
@@ -13,28 +13,31 @@ interface UseColorSchemeReturn {
 
 export default function useColorScheme(): UseColorSchemeReturn {
   const systemColorScheme = useDeviceColorScheme();
-  const nwColorScheme = useNativeWindColorScheme();
+  const nw = useNativeWindColorScheme();
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>('light');
-  const { storage, setItem } = useStorage();
 
   useEffect(() => {
-    const savedTheme = storage[StorageKey.THEME_KEY];
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      nwColorScheme.setColorScheme(savedTheme);
-      setColorSchemeState(savedTheme);
-    } else {
-      const initial = systemColorScheme === 'dark' ? 'dark' : 'light';
-      nwColorScheme.setColorScheme(initial);
-      setColorSchemeState(initial);
-    }
-  }, [systemColorScheme, nwColorScheme]);
+    const loadTheme = async () => {
+      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME_KEY);
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        nw.setColorScheme(savedTheme);
+        setColorSchemeState(savedTheme);
+      } else {
+        const initial = systemColorScheme === 'dark' ? 'dark' : 'light';
+        nw.setColorScheme(initial);
+        setColorSchemeState(initial);
+      }
+    };
+    loadTheme();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [systemColorScheme]);
 
   const toggleColorScheme = useCallback(async () => {
     const newTheme = colorScheme === 'light' ? 'dark' : 'light';
-    nwColorScheme.setColorScheme(newTheme);
+    nw.setColorScheme(newTheme);
     setColorSchemeState(newTheme);
-    await setItem(StorageKey.THEME_KEY, newTheme);
-  }, [colorScheme, nwColorScheme]);
+    await AsyncStorage.setItem(StorageKey.THEME_KEY, newTheme);
+  }, [colorScheme]);
 
   return { colorScheme, toggleColorScheme };
 }

@@ -6,8 +6,8 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useColorScheme } from '@/src/hooks';
 import { api } from "@/src/services";
 import { StorageKey } from "@/src/constants";
 import { StorageProvider, PubSubProvider } from "@/src/providers";
@@ -61,15 +61,9 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const { colorScheme } = useColorScheme();
+  const { colorScheme } = useNativeWindColorScheme();
+  const theme = themeColors[colorScheme || 'light'];
 
-  const theme = themeColors[colorScheme];
-  const themeConfig = {
-    headerStyle: { backgroundColor: theme.navigationBackground },
-    headerTintColor: theme.headerTintColor,
-  };
-
-  // on theme change
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
@@ -92,7 +86,8 @@ function RootLayoutNav() {
                 name="(tabs)"
                 options={{
                   headerShown: false,
-                  ...themeConfig
+                  headerStyle: { backgroundColor: theme.navigationBackground },
+                  headerTintColor: theme.headerTintColor,
                 }}
               />
               <Stack.Screen
@@ -100,7 +95,8 @@ function RootLayoutNav() {
                 options={{
                   title: 'Messages',
                   headerBackTitle: 'Back',
-                  ...themeConfig
+                  headerStyle: { backgroundColor: theme.navigationBackground },
+                  headerTintColor: theme.headerTintColor,
                 }}
               />
               <Stack.Screen
@@ -108,7 +104,8 @@ function RootLayoutNav() {
                 options={{
                   title: 'New Message',
                   presentation: 'modal',
-                  ...themeConfig
+                  headerStyle: { backgroundColor: theme.navigationBackground },
+                  headerTintColor: theme.headerTintColor,
                 }}
               />
             </Stack>

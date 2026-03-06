@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { MessageBubble } from './MessageBubble';
-import { brandColors } from "@/src/constants";
+import { brandColors } from "@/src/constants/Colors";
 
 interface Message {
   id: number;
