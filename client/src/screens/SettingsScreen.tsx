@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, Switch } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, useColorScheme as useDeviceColorScheme, View } from 'react-native';
 import { api } from "@/src/services";
 import { useStorage } from "@/src/providers";
-import { StorageKey, PhoneNumber } from "@/src/constants";
+import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
 import { useColorScheme } from 'nativewind';
 import { brandColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
   const [apiUrl, setApiUrl] = useState(api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState(PhoneNumber.DEFAULT as string);
-  const { colorScheme, setColorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const [themeMode, setThemeMode] = useState<ThemeMode>(ThemeMode.SYSTEM);
+
+  const deviceColorScheme = useDeviceColorScheme();
+  const { setColorScheme } = useColorScheme();
 
   const { storage, setItem } = useStorage();
 
   useEffect(() => {
     const savedPhoneNumber = storage[StorageKey.PHONE_NUMBER_KEY];
     const savedApiUrl = storage[StorageKey.API_URL_KEY];
+    const savedTheme = storage[StorageKey.THEME_KEY] as ThemeMode | null;
     if (savedPhoneNumber != null) {
       setPhoneNumber(savedPhoneNumber);
     }
     if (savedApiUrl != null) {
       setApiUrl(savedApiUrl);
+    }
+    if (savedTheme != null) {
+      setThemeMode(savedTheme);
     }
   }, []);
 
@@ -44,40 +50,38 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleToggleTheme = async () => {
+  const handleSetThemeMode = async (mode: ThemeMode) => {
     try {
-      const newTheme = isDark ? 'light' : 'dark';
-      setColorScheme(newTheme);
-      await setItem(StorageKey.THEME_KEY, newTheme);
+      setThemeMode(mode);
+      await setItem(StorageKey.THEME_KEY, mode);
+
+      if (mode === ThemeMode.SYSTEM) {
+        const systemTheme = deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT;
+        setColorScheme(systemTheme);
+      } else {
+        setColorScheme(mode);
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to toggle theme');
+      Alert.alert('Error', 'Failed to update theme');
     }
   };
 
+  const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
+    { value: ThemeMode.SYSTEM, label: 'System', description: 'Follow device appearance' },
+    { value: ThemeMode.LIGHT, label: 'Light', description: 'Always use light appearance' },
+    { value: ThemeMode.DARK, label: 'Dark', description: 'Always use dark appearance' },
+  ];
+
+  // Update theme when system preference changes and mode is 'system'
+  useEffect(() => {
+    if (themeMode === ThemeMode.SYSTEM) {
+      const systemTheme = deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT;
+      setColorScheme(systemTheme);
+    }
+  }, [themeMode, deviceColorScheme, setColorScheme]);
+
   return (
     <View className="flex-1 p-5 bg-white dark:bg-gray-900">
-      <View className="mb-7">
-        <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">
-          Appearance
-        </Text>
-        <View className="flex-row items-center justify-between p-4 rounded-xl border bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-          <View>
-            <Text className="text-base font-semibold text-gray-900 dark:text-white">
-              Dark Mode
-            </Text>
-            <Text className="text-sm mt-1 text-gray-500 dark:text-gray-400">
-              {isDark ? 'Currently using dark theme' : 'Currently using light theme'}
-            </Text>
-          </View>
-          <Switch
-            value={isDark}
-            onValueChange={handleToggleTheme}
-            trackColor={{ false: '#767577', true: '#34C759' }}
-            thumbColor="#f4f3f4"
-          />
-        </View>
-      </View>
-
       <View className="mb-7">
         <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">
           API URL
@@ -111,6 +115,37 @@ export default function SettingsScreen() {
         <TouchableOpacity className="bg-blue-500 rounded-xl py-3.5 items-center" onPress={handleSavePhoneNumber}>
           <Text className="text-white text-base font-semibold">Save Phone Number</Text>
         </TouchableOpacity>
+      </View>
+
+      <View className="mb-7">
+        <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">
+          Appearance
+        </Text>
+        <View className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {themeOptions.map((option, index) => (
+            <TouchableOpacity
+              key={option.value}
+              className={`flex-row items-center justify-between p-4 ${
+                index !== themeOptions.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''
+              } ${themeMode === option.value ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}`}
+              onPress={() => handleSetThemeMode(option.value)}
+            >
+              <View>
+                <Text className={`text-base font-semibold ${themeMode === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
+                  {option.label}
+                </Text>
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  {option.description}
+                </Text>
+              </View>
+              {themeMode === option.value && (
+                <View className="w-5 h-5 rounded-full bg-blue-500 items-center justify-center">
+                  <View className="w-2.5 h-2.5 rounded-full bg-white" />
+                </View>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
       <View className="mt-5 p-4 rounded-xl bg-gray-100 dark:bg-gray-800">

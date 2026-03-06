@@ -14,7 +14,8 @@ export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({ child
       entries.forEach(([key, value]) => {
         initialData[key] = value;
       });
-      setStorage(initialData);
+      // setStorage(initialData);
+      setStorage((prev) => ({ ...prev, ...initialData }));
     };
 
     loadStorage();

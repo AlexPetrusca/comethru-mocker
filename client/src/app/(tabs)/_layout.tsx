@@ -3,10 +3,11 @@ import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { themeColors } from '@/src/constants/Colors';
+import { ThemeMode } from "@/src/constants";
 
 export default function TabLayout() {
   const { colorScheme } = useNativeWindColorScheme();
-  const theme = themeColors[colorScheme || 'light'];
+  const theme = themeColors[colorScheme || ThemeMode.LIGHT];
 
   return (
     <Tabs
