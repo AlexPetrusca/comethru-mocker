@@ -1,15 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { MessageBubble } from './MessageBubble';
+import { brandColors } from "@/src/constants";
 
 interface Message {
   id: number;
@@ -31,7 +23,6 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    // Scroll to bottom when messages change
     if (scrollViewRef.current) {
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -47,14 +38,14 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-white dark:bg-gray-900"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={0}
     >
       <ScrollView
         ref={scrollViewRef}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        className="flex-1"
+        contentContainerClassName="py-4"
         showsVerticalScrollIndicator={true}
       >
         {messages.map((message) => (
@@ -68,69 +59,24 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
         ))}
       </ScrollView>
 
-      <View style={styles.inputContainer}>
+      <View className="flex-row p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 pb-3">
         <TextInput
-          style={styles.input}
+          className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 mr-3 text-base max-h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           placeholder="Write a message..."
           value={messageBody}
           onChangeText={setMessageBody}
           multiline
           maxLength={1600}
+          placeholderTextColor={brandColors.placeholder}
         />
         <TouchableOpacity
-          style={[styles.sendButton, !messageBody.trim() && styles.sendButtonDisabled]}
+          className={`rounded-full px-4 justify-center ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}`}
           onPress={handleSend}
           disabled={!messageBody.trim()}
         >
-          <Text style={styles.sendButtonText}>Send</Text>
+          <Text className="text-white text-sm font-semibold">Send</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingVertical: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 12,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e5ea',
-    backgroundColor: '#f9f9f9',
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#d1d1d6',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
-    fontSize: 16,
-    maxHeight: 100,
-  },
-  sendButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#d1d1d6',
-  },
-  sendButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-});

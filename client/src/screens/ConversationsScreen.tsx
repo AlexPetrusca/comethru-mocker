@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ConversationListItem } from '@/src/components';
 import { messagesService, Conversation } from '@/src/services';
@@ -45,22 +45,22 @@ export default function ConversationsScreen() {
 
   if (!phoneNumber) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Loading...</Text>
+      <View className="flex-1 items-center justify-center p-8 bg-white dark:bg-gray-900">
+        <Text className="text-base text-gray-500 dark:text-gray-400">Loading...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.phoneNumber}>{phoneNumber}</Text>
+    <View className="flex-1 bg-white dark:bg-gray-900">
+      <View className="p-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+        <Text className="text-sm text-center text-gray-500 dark:text-gray-400">{phoneNumber}</Text>
       </View>
 
       {conversations.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyTitle}>No Conversations</Text>
-          <Text style={styles.emptySubtitle}>
+        <View className="flex-1 items-center justify-center p-8 bg-white dark:bg-gray-900">
+          <Text className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">No Conversations</Text>
+          <Text className="text-base text-center text-gray-500 dark:text-gray-400">
             Start a conversation by sending a message
           </Text>
         </View>
@@ -75,72 +75,17 @@ export default function ConversationsScreen() {
             />
           )}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
       )}
 
       <TouchableOpacity
-        style={styles.newMessageButton}
+        className="absolute bottom-5 right-5 bg-blue-500 rounded-full py-3 px-6 shadow-lg"
         onPress={() => router.push(`/compose?to=${phoneNumber}`)}
       >
-        <Text style={styles.newMessageButtonText}>New Message</Text>
+        <Text className="text-white text-base font-semibold">New Message</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    padding: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5ea',
-  },
-  phoneNumber: {
-    fontSize: 14,
-    color: '#8e8e93',
-    textAlign: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 32,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 16,
-    color: '#8e8e93',
-    textAlign: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#8e8e93',
-  },
-  newMessageButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#007AFF',
-    borderRadius: 30,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
-    elevation: 5,
-  },
-  newMessageButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

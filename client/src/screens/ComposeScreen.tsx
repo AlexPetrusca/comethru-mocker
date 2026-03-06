@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { messagesService } from '@/src/services';
 import { useStorage } from '@/src/providers';
-import { StorageKey, PhoneNumber } from "@/src/constants";
+import { StorageKey, PhoneNumber, brandColors } from "@/src/constants";
 
 export default function ComposeScreen() {
   const router = useRouter();
@@ -50,33 +50,35 @@ export default function ComposeScreen() {
           title: 'New Message',
           headerBackTitle: 'Cancel',
           headerRight: () => (
-            <TouchableOpacity onPress={handleSend} style={styles.sendHeaderButton}>
-              <Text style={styles.sendHeaderButtonText}>Send</Text>
+            <TouchableOpacity onPress={handleSend} className="mr-4">
+              <Text className="text-blue-500 text-base font-semibold">Send</Text>
             </TouchableOpacity>
           ),
         }}
       />
-      <View style={styles.container}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>To:</Text>
+      <View className="flex-1 p-4 bg-white dark:bg-gray-900">
+        <View className="mb-5">
+          <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">To:</Text>
           <TextInput
-            style={styles.input}
+            className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-base bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
             value={recipient}
             onChangeText={setRecipient}
             placeholder="Phone number"
+            placeholderTextColor={brandColors.placeholder}
             keyboardType="phone-pad"
             autoCapitalize="none"
             autoCorrect={false}
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Message:</Text>
+        <View className="mb-5">
+          <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">Message:</Text>
           <TextInput
-            style={[styles.input, styles.messageInput]}
+            className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-base bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white min-h-[150px] text-top"
             value={body}
             onChangeText={setBody}
             placeholder="Write a message..."
+            placeholderTextColor={brandColors.placeholder}
             multiline
             textAlignVertical="top"
           />
@@ -85,39 +87,3 @@ export default function ComposeScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#8e8e93',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d1d6',
-    borderRadius: 12,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  messageInput: {
-    minHeight: 150,
-  },
-  sendHeaderButton: {
-    marginRight: 16,
-  },
-  sendHeaderButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

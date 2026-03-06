@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import { MessageThread } from '@/src/components';
 import { messagesService, Message } from '@/src/services';
 import { useStorage } from '@/src/providers';
 import { PhoneNumber, StorageKey } from "@/src/constants";
 
 export default function MessageThreadScreen() {
-  const router = useRouter();
   const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const { storage } = useStorage();
   const [currentNumber, setCurrentNumber] = useState<string>('');
@@ -52,8 +51,8 @@ export default function MessageThreadScreen() {
 
   if (!currentNumber || loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF"/>
+      <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
+        <ActivityIndicator size="large" color="#3B82F6" />
       </View>
     );
   }
@@ -75,11 +74,3 @@ export default function MessageThreadScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

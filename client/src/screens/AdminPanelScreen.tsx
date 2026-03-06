@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
 import { verificationService, messagesService } from '@/src/services';
-import { StorageKey, PhoneNumber, PubSubEvent } from "@/src/constants";
+import { StorageKey, PhoneNumber, PubSubEvent, brandColors } from "@/src/constants";
 import { useStorage, useSubscribe } from "@/src/providers";
 
 export default function AdminPanelScreen() {
@@ -18,7 +18,6 @@ export default function AdminPanelScreen() {
     message: string
   } | null>(null);
 
-  // on mount
   useEffect(() => {
     const savedNumber = storage[StorageKey.PHONE_NUMBER_KEY];
     if (savedNumber != null) {
@@ -68,95 +67,36 @@ export default function AdminPanelScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-    <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number"/>
+    <ScrollView className="flex-1 p-4 bg-white dark:bg-gray-900">
+      <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number" />
 
-  <View style={styles.section}>
-  <Text style={styles.sectionTitle}>Verification Code</Text>
-  <TouchableOpacity style={styles.button} onPress={handleSendVerification}>
-  <Text style={styles.buttonText}>Request Code</Text>
-  </TouchableOpacity>
-  {requestCodeStatus && (
-    <Text
-      style={[styles.statusMessage, requestCodeStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
-    {requestCodeStatus.message}
-    </Text>
-  )}
-  <TextInput
-    style={styles.input}
-  placeholder="Enter code"
-  value={verificationCode}
-  onChangeText={setVerificationCode}
-  keyboardType="number-pad"
-  />
-  <TouchableOpacity style={styles.button} onPress={handleVerifyCode}>
-  <Text style={styles.buttonText}>Verify</Text>
-    </TouchableOpacity>
-  {verifyStatus && (
-    <Text
-      style={[styles.statusMessage, verifyStatus.type === 'success' ? styles.statusSuccess : styles.statusError]}>
-    {verifyStatus.message}
-    </Text>
-  )}
-  </View>
-
-  </ScrollView>
-);
+      <View className="mb-6">
+        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Verification Code</Text>
+        <TouchableOpacity className="bg-blue-500 rounded-xl py-3.5 items-center mb-3" onPress={handleSendVerification}>
+          <Text className="text-white text-base font-semibold">Request Code</Text>
+        </TouchableOpacity>
+        {requestCodeStatus && (
+          <Text className={`mt-2 p-2.5 rounded-lg text-sm ${requestCodeStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            {requestCodeStatus.message}
+          </Text>
+        )}
+        <TextInput
+          className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 mb-3 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          placeholder="Enter code..."
+          placeholderTextColor={brandColors.placeholder}
+          value={verificationCode}
+          onChangeText={setVerificationCode}
+          keyboardType="number-pad"
+        />
+        <TouchableOpacity className="bg-blue-500 rounded-xl py-3.5 items-center mb-3" onPress={handleVerifyCode}>
+          <Text className="text-white text-base font-semibold">Verify</Text>
+        </TouchableOpacity>
+        {verifyStatus && (
+          <Text className={`mt-2 p-2.5 rounded-lg text-sm ${verifyStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            {verifyStatus.message}
+          </Text>
+        )}
+      </View>
+    </ScrollView>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  secondaryButton: {
-    backgroundColor: '#5856D6',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  statusMessage: {
-    marginBottom: 12,
-    padding: 10,
-    borderRadius: 6,
-    fontSize: 14,
-  },
-  statusSuccess: {
-    backgroundColor: '#d4edda',
-    color: '#155724',
-  },
-  statusError: {
-    backgroundColor: '#f8d7da',
-    color: '#721c24',
-  },
-});

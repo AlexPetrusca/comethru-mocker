@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 interface Conversation {
   otherParty: string;
@@ -32,65 +32,25 @@ export function ConversationListItem({ conversation, onPress }: ConversationList
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{conversation.otherParty.slice(-2)}</Text>
+    <TouchableOpacity className="flex-row p-4 border-b border-gray-200 dark:border-gray-700" onPress={onPress}>
+      <View className="w-12 h-12 rounded-full bg-blue-500 items-center justify-center mr-3">
+        <Text className="text-white text-lg font-semibold">
+          {conversation.otherParty.slice(-2)}
+        </Text>
       </View>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.otherParty}>{conversation.otherParty}</Text>
-          <Text style={styles.timestamp}>{formatTimestamp(conversation.lastMessageAt)}</Text>
+      <View className="flex-1 justify-center">
+        <View className="flex-row justify-between mb-1">
+          <Text className="text-base font-semibold text-black dark:text-white">
+            {conversation.otherParty}
+          </Text>
+          <Text className="text-sm text-gray-400">
+            {formatTimestamp(conversation.lastMessageAt)}
+          </Text>
         </View>
-        <Text style={styles.lastMessage} numberOfLines={1}>
+        <Text className="text-sm text-gray-400" numberOfLines={1}>
           {conversation.lastMessage}
         </Text>
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e5ea',
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  otherParty: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#000',
-  },
-  timestamp: {
-    fontSize: 14,
-    color: '#8e8e93',
-  },
-  lastMessage: {
-    fontSize: 15,
-    color: '#8e8e93',
-  },
-});

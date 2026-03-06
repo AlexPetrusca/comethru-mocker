@@ -1,17 +1,27 @@
 import React from 'react';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
-import { Colors } from '@/src/constants';
+import { themeColors } from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/hooks';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
+
+  const theme = themeColors[colorScheme];
+  const themeConfig = {
+      tabBarActiveTintColor: theme.tint,
+      tabBarStyle: {
+          backgroundColor: theme.navigationBackground,
+          borderTopColor: theme.navigationBorder,
+      },
+      headerStyle: {
+          backgroundColor: theme.navigationBackground,
+      },
+      headerTintColor: theme.headerTintColor,
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint
-      }}>
+    <Tabs screenOptions={themeConfig}>
       <Tabs.Screen
         name="index"
         options={{

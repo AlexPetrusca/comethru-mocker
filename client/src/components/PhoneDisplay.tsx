@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 interface PhoneDisplayProps {
   phoneNumber: string;
@@ -8,28 +8,9 @@ interface PhoneDisplayProps {
 
 export function PhoneDisplay({ phoneNumber, label = 'Phone Number' }: PhoneDisplayProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.phoneNumber}>{phoneNumber}</Text>
+    <View className="m-4 p-4 rounded-lg mb-4 bg-gray-100 dark:bg-gray-800">
+      <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">{label}</Text>
+      <Text className="text-2xl font-semibold text-gray-900 dark:text-white">{phoneNumber}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
-  },
-  phoneNumber: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333',
-  },
-});
