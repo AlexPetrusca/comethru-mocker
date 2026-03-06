@@ -1,8 +1,8 @@
 import { useColorScheme as useDeviceColorScheme } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StorageKey } from '@/src/constants';
+import { useStorage } from "@/src/providers";
 
 export type ColorScheme = 'light' | 'dark';
 
@@ -15,10 +15,11 @@ export default function useColorScheme(): UseColorSchemeReturn {
   const systemColorScheme = useDeviceColorScheme();
   const nw = useNativeWindColorScheme();
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>('light');
+  const { storage, setItem } =  useStorage();
 
   useEffect(() => {
     const loadTheme = async () => {
-      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME_KEY);
+      const savedTheme = storage[StorageKey.THEME_KEY];
       if (savedTheme === 'light' || savedTheme === 'dark') {
         nw.setColorScheme(savedTheme);
         setColorSchemeState(savedTheme);
@@ -29,14 +30,13 @@ export default function useColorScheme(): UseColorSchemeReturn {
       }
     };
     loadTheme();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [systemColorScheme]);
 
   const toggleColorScheme = useCallback(async () => {
     const newTheme = colorScheme === 'light' ? 'dark' : 'light';
     nw.setColorScheme(newTheme);
     setColorSchemeState(newTheme);
-    await AsyncStorage.setItem(StorageKey.THEME_KEY, newTheme);
+    await setItem(StorageKey.THEME_KEY, newTheme);
   }, [colorScheme]);
 
   return { colorScheme, toggleColorScheme };
