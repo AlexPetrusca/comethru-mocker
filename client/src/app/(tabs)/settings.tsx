@@ -1,1 +1,6 @@
-export { SettingsScreen as default } from "@/src/screens";
+import React from 'react';
+import { SettingsScreen } from "@/src/screens";
+
+export default function SettingsScreenWrapper() {
+  return <SettingsScreen />;
+}
