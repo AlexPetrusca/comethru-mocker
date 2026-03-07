@@ -75,7 +75,7 @@ export default function AdminPanelScreen() {
           </Text>
         )}
         <TextInput
-          className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 mb-3 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          className="singleline-textinput"
           placeholder="Enter code..."
           placeholderTextColor={brandColors.placeholder}
           value={verificationCode}

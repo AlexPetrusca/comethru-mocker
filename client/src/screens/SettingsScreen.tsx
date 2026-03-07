@@ -1,17 +1,18 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { Alert, Appearance, Platform, Text, TextInput, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
+import { Alert, Platform, Text, TextInput, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
+import { SymbolView } from 'expo-symbols';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from 'expo-router';
 import { api } from "@/src/services";
 import { usePubSub, useStorage } from "@/src/providers";
 import { PhoneNumber, PubSubEvent, StorageKey, ThemeMode } from "@/src/constants";
-import { brandColors } from "@/src/constants/Colors";
+import { brandColors, themeColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
   const { storage, setItem } = useStorage();
   const { publish } = usePubSub();
-  const { setColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
   const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL_KEY] || api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [themeMode, setThemeMode] = useState(storage[StorageKey.THEME_KEY] || ThemeMode.SYSTEM);
@@ -21,21 +22,19 @@ export default function SettingsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => setShowAboutModal(true)} className="mr-4">
-          <Text className="text-2xl">ⓘ</Text>
+          <SymbolView
+            name={{
+              ios: 'info.circle',
+              android: 'info',
+              web: 'info',
+            }}
+            size={24}
+            tintColor={themeColors[colorScheme || ThemeMode.LIGHT].tint}
+          />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
-
-  // useEffect(() => {
-  //   const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-  //     // Update theme when system preference changes and mode is 'system'
-  //     if (themeMode === ThemeMode.SYSTEM) {
-  //       setColorScheme(colorScheme === 'dark' ? ThemeMode.DARK : ThemeMode.LIGHT);
-  //     }
-  //   });
-  //   return () => subscription.remove();
-  // }, [themeMode]);
+  }, [navigation, colorScheme]);
 
   const handleSavePhoneNumber = async () => {
     try {
@@ -82,7 +81,7 @@ export default function SettingsScreen() {
           API URL
         </Text>
         <TextInput
-          className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 mb-3 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          className="singleline-textinput"
           value={apiUrl}
           onChangeText={setApiUrl}
           placeholder={api.defaults.baseURL}
@@ -100,7 +99,7 @@ export default function SettingsScreen() {
           Phone Number
         </Text>
         <TextInput
-          className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 mb-3 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          className="singleline-textinput"
           value={phoneNumber}
           onChangeText={setPhoneNumber}
           placeholder={PhoneNumber.DEFAULT}

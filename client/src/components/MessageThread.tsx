@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { MessageBubble } from './MessageBubble';
 import { brandColors } from "@/src/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Message {
   id: number;
@@ -19,8 +20,8 @@ interface MessageThreadProps {
 }
 
 export function MessageThread({ messages, currentNumber, otherParty, onSendMessage }: MessageThreadProps) {
-  const [messageBody, setMessageBody] = useState('');
   const scrollViewRef = useRef<ScrollView>(null);
+  const [messageBody, setMessageBody] = useState('');
 
   useEffect(() => {
     if (scrollViewRef.current) {
@@ -62,7 +63,7 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
       <View className={`border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800`}>
         <View className={`flex-row p-3 items-end ${Platform.OS !== 'web' ? 'pb-11' : ''}`}>
           <TextInput
-            className={`flex-1 border border-gray-300 dark:border-gray-600 rounded-2xl px-4 py-2 mr-3 text-base max-h-24 min-h-[40px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${Platform.OS === 'web' ? 'h-10' : ''}`}
+            className={`multiline-textinput px-4 py-2 flex-1 min-h-[40px] max-h-24 mr-3 ${Platform.OS === 'web' ? 'h-10' : ''}`}
             placeholder="Write a message..."
             value={messageBody}
             onChangeText={setMessageBody}
@@ -76,7 +77,7 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
             onPress={handleSend}
             disabled={!messageBody.trim()}
           >
-            <Text className="text-white text-lg font-semibold">➤</Text>
+            <Ionicons name="send" size={16} color='white' />
           </TouchableOpacity>
         </View>
       </View>

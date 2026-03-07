@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Platform } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, Text, TextInput, Alert, Platform, TouchableOpacity } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack, useNavigation } from 'expo-router';
 import { messagesService } from '@/src/services';
 import { useStorage } from '@/src/providers';
 import { StorageKey, PhoneNumber } from "@/src/constants";
@@ -8,6 +8,7 @@ import { brandColors } from "@/src/constants/Colors";
 
 export default function ComposeScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { storage } = useStorage();
   const { to } = useLocalSearchParams<{ to?: string }>();
   const [currentNumber, setCurrentNumber] = useState<string>('');
@@ -44,24 +45,35 @@ export default function ComposeScreen() {
     }
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRightContainerStyle: {
+        paddingRight: 16,
+      },
+      headerRight: () => (
+        <Text
+          onPress={handleSend}
+          style={{ color: '#3B82F6', fontSize: 17, fontWeight: '600', padding: 8 }}
+        >
+          Send
+        </Text>
+      ),
+    });
+  }, [navigation, handleSend]);
+
   return (
     <>
       <Stack.Screen
         options={{
           title: 'New Message',
           headerBackTitle: 'Cancel',
-          headerRight: () => (
-            <TouchableOpacity onPress={handleSend} className="mr-4">
-              <Text className="text-blue-500 text-base font-semibold">Send</Text>
-            </TouchableOpacity>
-          ),
         }}
       />
       <View className="flex-1 p-4 bg-white dark:bg-gray-900">
         <View className="mb-5">
           <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">To:</Text>
           <TextInput
-            className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-base bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white"
+            className="singleline-textinput"
             value={recipient}
             onChangeText={setRecipient}
             placeholder="Phone number"
@@ -75,7 +87,7 @@ export default function ComposeScreen() {
         <View className="mb-5">
           <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">Message:</Text>
           <TextInput
-            className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-base bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white min-h-[150px] text-top"
+            className="multiline-textinput min-h-[150px]"
             value={body}
             onChangeText={setBody}
             placeholder="Write a message..."
