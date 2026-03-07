@@ -35,10 +35,7 @@ public class MessageService {
     }
 
     public List<Message> getMessagesBetween(String from, String to) {
-        List<Message> messages = new ArrayList<>();
-        messages.addAll(messageRepository.findByFromAndTo(from, to));
-        messages.addAll(messageRepository.findByFromAndTo(to, from));
-        return messages.stream()
+        return messageRepository.findConversation(from, to).stream()
                 .sorted(Comparator.comparing(Message::getSentAt))
                 .toList();
     }
@@ -46,7 +43,9 @@ public class MessageService {
     public Message sendMessage(String from, String to, String body) {
         Message message = messageRepository.save(new Message(from, to, body));
         sseService.multicast(to, "message", message);
-        sseService.multicast(from, "message", message);
+        if (!to.equals(from)) {
+            sseService.multicast(from, "message", message);
+        }
         return message;
     }
 
