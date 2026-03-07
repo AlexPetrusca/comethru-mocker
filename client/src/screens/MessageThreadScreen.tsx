@@ -9,7 +9,7 @@ import { PhoneNumber, StorageKey } from "@/src/constants";
 export default function MessageThreadScreen() {
   const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const { storage } = useStorage();
-  const [currentNumber, setCurrentNumber] = useState<string>('');
+  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,10 +24,6 @@ export default function MessageThreadScreen() {
       setLoading(false);
     }
   }, [currentNumber, otherParty]);
-
-  useEffect(() => {
-    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
-  }, [storage]);
 
   useEffect(() => {
     if (currentNumber) {

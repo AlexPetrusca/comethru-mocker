@@ -11,13 +11,9 @@ export default function ComposeScreen() {
   const navigation = useNavigation();
   const { storage } = useStorage();
   const { to } = useLocalSearchParams<{ to?: string }>();
-  const [currentNumber, setCurrentNumber] = useState<string>('');
+  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [recipient, setRecipient] = useState(to || '');
   const [body, setBody] = useState('');
-
-  React.useEffect(() => {
-    setCurrentNumber(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
-  }, [storage]);
 
   const handleSend = async () => {
     if (!recipient.trim() || !body.trim()) {
