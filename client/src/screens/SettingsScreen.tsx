@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, useColorScheme as useDeviceColorScheme, View } from 'react-native';
-import { api } from "@/src/services";
-import { useStorage } from "@/src/providers";
-import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
+import React, { useState } from 'react';
+import { Alert, Appearance, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useColorScheme } from 'nativewind';
+import { api } from "@/src/services";
+import { usePubSub, useStorage } from "@/src/providers";
+import { PhoneNumber, PubSubEvent, StorageKey, ThemeMode } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
 
 export default function SettingsScreen() {
   const { storage, setItem } = useStorage();
-  const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL_KEY] || api.defaults.baseURL);
+  const { publish } = usePubSub();
+  const { setColorScheme } = useColorScheme();
+  const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL_KEY] || api.defaults.baseURL as string);
   const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [themeMode, setThemeMode] = useState(storage[StorageKey.THEME_KEY] || ThemeMode.SYSTEM);
 
-  const deviceColorScheme = useDeviceColorScheme();
-  const { setColorScheme } = useColorScheme();
+  // useEffect(() => {
+  //   const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+  //     // Update theme when system preference changes and mode is 'system'
+  //     if (themeMode === ThemeMode.SYSTEM) {
+  //       setColorScheme(colorScheme === 'dark' ? ThemeMode.DARK : ThemeMode.LIGHT);
+  //     }
+  //   });
+  //   return () => subscription.remove();
+  // }, [themeMode]);
 
   const handleSavePhoneNumber = async () => {
     try {
       await setItem(StorageKey.PHONE_NUMBER_KEY, phoneNumber);
+      publish(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber);
       Alert.alert('Success', 'Phone number saved!');
     } catch (error) {
       Alert.alert('Error', 'Failed to save phone number');
@@ -26,8 +36,9 @@ export default function SettingsScreen() {
 
   const handleSaveApiUrl = async () => {
     try {
-      await setItem(StorageKey.API_URL_KEY, apiUrl);
       api.defaults.baseURL = apiUrl;
+      await setItem(StorageKey.API_URL_KEY, apiUrl);
+      publish(PubSubEvent.API_URL_CHANGED, apiUrl);
       Alert.alert('Success', 'API URL saved!');
     } catch (error) {
       Alert.alert('Error', 'Failed to save API URL');
@@ -35,18 +46,13 @@ export default function SettingsScreen() {
   };
 
   const handleSetThemeMode = async (mode: ThemeMode) => {
-    try {
-      setThemeMode(mode);
-      await setItem(StorageKey.THEME_KEY, mode);
+    setThemeMode(mode);
+    await setItem(StorageKey.THEME_KEY, mode);
 
-      if (mode === ThemeMode.SYSTEM) {
-        const systemTheme = deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT;
-        setColorScheme(systemTheme);
-      } else {
-        setColorScheme(mode);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update theme');
+    if (mode === ThemeMode.SYSTEM) {
+      setColorScheme('system');
+    } else {
+      setColorScheme(mode);
     }
   };
 
@@ -55,14 +61,6 @@ export default function SettingsScreen() {
     { value: ThemeMode.LIGHT, label: 'Light', description: 'Always use light appearance' },
     { value: ThemeMode.DARK, label: 'Dark', description: 'Always use dark appearance' },
   ];
-
-  // Update theme when system preference changes and mode is 'system'
-  useEffect(() => {
-    if (themeMode === ThemeMode.SYSTEM) {
-      const systemTheme = deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT;
-      setColorScheme(systemTheme);
-    }
-  }, [themeMode, deviceColorScheme, setColorScheme]);
 
   return (
     <View className="flex-1 p-5 bg-white dark:bg-gray-900">
@@ -86,7 +84,7 @@ export default function SettingsScreen() {
 
       <View className="mb-7">
         <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">
-          Default Phone Number
+          Phone Number
         </Text>
         <TextInput
           className="border border-gray-300 dark:border-gray-600 rounded-xl p-3 mb-3 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-white"

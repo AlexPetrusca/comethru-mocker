@@ -17,15 +17,8 @@ export const usePubSub = () => {
   return context;
 };
 
-// const publish = usePublish();
-// publish(PubSubEvent.SOME_EVENT, data);
-export const usePublish = () => {
-  const { publish } = usePubSub();
-  return publish;
-};
-
 // useSubscribe(PubSubEvent.SOME_EVENT, (data) => { ... });
-export const useSubscribe = <T extends PubSubEvent>(
+export const useSubscription = <T extends PubSubEvent>(
   event: T,
   callback: (data: PubSubPayload[T]) => void
 ) => {

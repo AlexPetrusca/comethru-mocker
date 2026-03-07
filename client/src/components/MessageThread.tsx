@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { MessageBubble } from './MessageBubble';
 import { brandColors } from "@/src/constants/Colors";
 
@@ -40,7 +40,7 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
     <KeyboardAvoidingView
       className="flex-1 bg-white dark:bg-gray-900"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <ScrollView
         ref={scrollViewRef}
@@ -59,24 +59,29 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
         ))}
       </ScrollView>
 
-      <View className="flex-row p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 pb-3">
-        <TextInput
-          className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 mr-3 text-base max-h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          placeholder="Write a message..."
-          value={messageBody}
-          onChangeText={setMessageBody}
-          multiline
-          maxLength={1600}
-          placeholderTextColor={brandColors.placeholder}
-        />
-        <TouchableOpacity
-          className={`rounded-full px-4 justify-center ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}`}
-          onPress={handleSend}
-          disabled={!messageBody.trim()}
-        >
-          <Text className="text-white text-sm font-semibold">Send</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <View className="flex-row p-3 pb-2">
+          <TextInput
+            className={`flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 mr-3 text-base max-h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${Platform.OS === 'web' ? 'h-10' : ''}`}
+            placeholder="Write a message..."
+            value={messageBody}
+            onChangeText={setMessageBody}
+            multiline={Platform.OS !== 'web'}
+            maxLength={1600}
+            placeholderTextColor={brandColors.placeholder}
+            textAlignVertical="center"
+          />
+          <TouchableOpacity
+            className={`rounded-full justify-center items-center ${Platform.OS === 'web' ? 'w-10 h-10' : 'px-4'} ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}`}
+            onPress={handleSend}
+            disabled={!messageBody.trim()}
+          >
+            <Text className={`text-white font-semibold ${Platform.OS === 'web' ? 'text-lg' : 'text-sm'}`}>
+              {Platform.OS === 'web' ? '➤' : 'Send'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }

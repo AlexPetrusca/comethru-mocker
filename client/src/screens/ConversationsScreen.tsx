@@ -3,15 +3,25 @@ import { View, Text, FlatList, RefreshControl, TouchableOpacity } from 'react-na
 import { useRouter } from 'expo-router';
 import { ConversationListItem } from '@/src/components';
 import { messagesService, Conversation } from '@/src/services';
-import { useStorage } from '@/src/providers';
-import { PhoneNumber, StorageKey } from "@/src/constants";
+import { useStorage, useSubscription } from '@/src/providers';
+import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 
 export default function ConversationsScreen() {
   const router = useRouter();
   const { storage } = useStorage();
-  const [phoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
+  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
+    setPhoneNumber(phoneNumber);
+  });
+
+  useEffect(() => {
+    if (phoneNumber) {
+      loadConversations();
+    }
+  }, [phoneNumber]);
 
   const loadConversations = async () => {
     if (!phoneNumber) return;
@@ -22,12 +32,6 @@ export default function ConversationsScreen() {
       console.error('Failed to load conversations:', error);
     }
   };
-
-  useEffect(() => {
-    if (phoneNumber) {
-      loadConversations();
-    }
-  }, [phoneNumber]);
 
   const onRefresh = async () => {
     setRefreshing(true);

@@ -3,7 +3,7 @@ import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { PhoneDisplay } from '@/src/components';
 import { verificationService, messagesService } from '@/src/services';
 import { StorageKey, PhoneNumber, PubSubEvent } from "@/src/constants";
-import { useStorage, useSubscribe } from "@/src/providers";
+import { useStorage, useSubscription } from "@/src/providers";
 import { brandColors } from "@/src/constants/Colors";
 
 export default function AdminPanelScreen() {
@@ -19,7 +19,7 @@ export default function AdminPanelScreen() {
     message: string
   } | null>(null);
 
-  useSubscribe(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
     setPhoneNumber(phoneNumber);
   });
 
