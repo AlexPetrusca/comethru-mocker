@@ -1,17 +1,26 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { MessageThread } from '@/src/components';
-import { messagesService, Message } from '@/src/services';
-import { useStorage } from '@/src/providers';
-import { PhoneNumber, StorageKey } from "@/src/constants";
+import { Message, messagesService } from '@/src/services';
+import { useStorage, useSubscription } from '@/src/providers';
+import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 
 export default function MessageThreadScreen() {
-  const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const { storage } = useStorage();
+  const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
   const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useSubscription(PubSubEvent.MESSAGE_RECEIVED, message => {
+    const notSentByUs = messages[messages.length - 1].id !== message.id;
+    const isPartOfConversation = (message.to === currentNumber && message.from === otherParty)
+      || (message.to === otherParty && message.from === currentNumber);
+    if (isPartOfConversation && notSentByUs) {
+      setMessages(prev => [...prev, message])
+    }
+  });
 
   const loadMessages = useCallback(async () => {
     if (!currentNumber || !otherParty) return;

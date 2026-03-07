@@ -70,7 +70,7 @@ export default function AdminPanelScreen() {
           <Text className="text-white text-base font-semibold">Request Code</Text>
         </TouchableOpacity>
         {requestCodeStatus && (
-          <Text className={`mt-2 p-2.5 rounded-lg text-sm ${requestCodeStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          <Text className={`mt-2 mb-4 p-2.5 rounded-lg text-sm ${requestCodeStatus.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
             {requestCodeStatus.message}
           </Text>
         )}

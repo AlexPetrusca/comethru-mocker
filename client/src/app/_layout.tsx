@@ -10,7 +10,7 @@ import {useColorScheme as useNativeWindColorScheme} from 'nativewind';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {api} from "@/src/services";
 import { StorageKey, ThemeMode } from "@/src/constants";
-import {PubSubProvider, StorageProvider} from "@/src/providers";
+import { PubSubProvider, SseProvider, StorageProvider } from "@/src/providers";
 import {themeColors} from '@/src/constants/Colors';
 
 export {
@@ -94,38 +94,40 @@ function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, str
   return (
     <PubSubProvider>
       <StorageProvider initialData={initialStorage}>
-        <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
-          <View className="flex-1 bg-white dark:bg-gray-900">
-            <Stack>
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerShown: false,
-                  headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTint,
-                }}
-              />
-              <Stack.Screen
-                name="messages/[otherParty]"
-                options={{
-                  title: 'Messages',
-                  headerBackTitle: 'Back',
-                  headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTint,
-                }}
-              />
-              <Stack.Screen
-                name="compose/index"
-                options={{
-                  title: 'New Message',
-                  presentation: 'modal',
-                  headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTint,
-                }}
-              />
-            </Stack>
-          </View>
-        </ThemeProvider>
+        <SseProvider>
+          <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
+            <View className="flex-1 bg-white dark:bg-gray-900">
+              <Stack>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                    headerStyle: { backgroundColor: theme.navigationBackground },
+                    headerTintColor: theme.headerTint,
+                  }}
+                />
+                <Stack.Screen
+                  name="messages/[otherParty]"
+                  options={{
+                    title: 'Messages',
+                    headerBackTitle: 'Back',
+                    headerStyle: { backgroundColor: theme.navigationBackground },
+                    headerTintColor: theme.headerTint,
+                  }}
+                />
+                <Stack.Screen
+                  name="compose/index"
+                  options={{
+                    title: 'New Message',
+                    presentation: 'modal',
+                    headerStyle: { backgroundColor: theme.navigationBackground },
+                    headerTintColor: theme.headerTint,
+                  }}
+                />
+              </Stack>
+            </View>
+          </ThemeProvider>
+        </SseProvider>
       </StorageProvider>
     </PubSubProvider>
   );

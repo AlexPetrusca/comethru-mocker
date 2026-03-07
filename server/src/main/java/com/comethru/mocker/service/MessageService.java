@@ -15,14 +15,15 @@ import java.util.stream.Collectors;
 public class MessageService {
 
     private final MessageRepository messageRepository;
+    private final SseService sseService;
 
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository, SseService sseService) {
         this.messageRepository = messageRepository;
+        this.sseService = sseService;
     }
 
-    public Message sendMessage(String from, String to, String body) {
-        Message message = new Message(from, to, body);
-        return messageRepository.save(message);
+    public List<Message> getAllMessages() {
+        return messageRepository.findAll();
     }
 
     public List<Message> getMessagesByRecipient(String to) {
@@ -42,8 +43,11 @@ public class MessageService {
                 .toList();
     }
 
-    public List<Message> getAllMessages() {
-        return messageRepository.findAll();
+    public Message sendMessage(String from, String to, String body) {
+        Message message = messageRepository.save(new Message(from, to, body));
+        sseService.multicast(to, "message", message);
+        sseService.multicast(from, "message", message);
+        return message;
     }
 
     public boolean deleteMessage(Long id) {
@@ -88,6 +92,5 @@ public class MessageService {
             int messageCount,
             String lastMessage,
             Instant lastMessageAt
-    ) {
-    }
+    ) { }
 }

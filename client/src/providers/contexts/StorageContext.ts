@@ -1,6 +1,7 @@
 import { createContext } from "react";
+import { StorageKey } from "@/src/constants";
 
-export type StorageContextData = Record<string, string | null>;
+export type StorageContextData = Record<StorageKey, string | null>;
 
 export type StorageContextType = {
   storage: StorageContextData;
@@ -8,8 +9,13 @@ export type StorageContextType = {
   removeItem: (key: string) => Promise<void>;
 };
 
+const defaultStorage = Object.values(StorageKey).reduce(
+  (acc, key) => ({ ...acc, [key]: null }),
+  {} as StorageContextData
+);
+
 export const StorageContext = createContext<StorageContextType>({
-  storage: {},
+  storage: defaultStorage,
   setItem: async () => {},
   removeItem: async () => {},
 });

@@ -17,10 +17,12 @@ export default function ConversationsScreen() {
     setPhoneNumber(phoneNumber);
   });
 
+  useSubscription(PubSubEvent.MESSAGE_RECEIVED, () => {
+    loadConversations();
+  });
+
   useEffect(() => {
-    if (phoneNumber) {
-      loadConversations();
-    }
+    loadConversations();
   }, [phoneNumber]);
 
   const loadConversations = async () => {
