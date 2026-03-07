@@ -53,10 +53,6 @@ export default function ConversationsScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-gray-900">
-      <View className="p-4 pb-2 border-b border-gray-200 dark:border-gray-700">
-        <Text className="text-sm text-center text-gray-500 dark:text-gray-400">{phoneNumber}</Text>
-      </View>
-
       {conversations.length === 0 ? (
         <View className="flex-1 items-center justify-center p-8 bg-white dark:bg-gray-900">
           <Text className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">No Conversations</Text>

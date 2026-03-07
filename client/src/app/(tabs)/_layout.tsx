@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
@@ -16,6 +17,9 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.navigationBackground,
           borderTopColor: theme.navigationBorder,
+          paddingTop: Platform.OS === 'web' ? 8 : 0,
+          paddingBottom: Platform.OS === 'web' ? 8 : 0,
+          height: Platform.OS === 'web' ? 67 : undefined,
         },
         headerStyle: {
           backgroundColor: theme.navigationBackground,
