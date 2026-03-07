@@ -17,9 +17,9 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.navigationBackground,
           borderTopColor: theme.navigationBorder,
-          paddingTop: Platform.OS === 'web' ? 8 : 0,
-          paddingBottom: Platform.OS === 'web' ? 8 : 0,
-          height: Platform.OS === 'web' ? 67 : undefined,
+          paddingTop: Platform.OS === 'web' ? 10 : 0,
+          paddingBottom: Platform.OS === 'web' ? 10 : 0,
+          minHeight: Platform.OS === 'web' ? 72 : 'auto'
         },
         headerStyle: {
           backgroundColor: theme.navigationBackground,
