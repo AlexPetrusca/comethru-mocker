@@ -102,7 +102,7 @@ function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, str
                 options={{
                   headerShown: false,
                   headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTintColor,
+                  headerTintColor: theme.headerTint,
                 }}
               />
               <Stack.Screen
@@ -111,7 +111,7 @@ function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, str
                   title: 'Messages',
                   headerBackTitle: 'Back',
                   headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTintColor,
+                  headerTintColor: theme.headerTint,
                 }}
               />
               <Stack.Screen
@@ -120,7 +120,7 @@ function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, str
                   title: 'New Message',
                   presentation: 'modal',
                   headerStyle: { backgroundColor: theme.navigationBackground },
-                  headerTintColor: theme.headerTintColor,
+                  headerTintColor: theme.headerTint,
                 }}
               />
             </Stack>

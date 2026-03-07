@@ -20,7 +20,7 @@ export default function TabLayout() {
         headerStyle: {
           backgroundColor: theme.navigationBackground,
         },
-        headerTintColor: theme.headerTintColor,
+        headerTintColor: theme.headerTint,
       }}>
       <Tabs.Screen
         name="index"

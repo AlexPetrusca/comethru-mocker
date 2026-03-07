@@ -5,13 +5,13 @@ export const themeColors = {
   light: {
     navigationBackground: '#ffffff',
     navigationBorder: '#e5e5ea',
-    headerTintColor: '#000000',
+    headerTint: '#000000',
     tint: '#2f95dc',
   },
   dark: {
     navigationBackground: '#111827',
     navigationBorder: '#374151',
-    headerTintColor: '#ffffff',
+    headerTint: '#ffffff',
     tint: '#ffffff',
   },
 };
