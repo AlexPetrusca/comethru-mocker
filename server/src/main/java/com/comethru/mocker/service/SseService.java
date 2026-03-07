@@ -17,7 +17,6 @@ public class SseService {
     private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createEmitter(String id) {
-        System.out.println("New SSE Connection: " + id);
         SseEmitter emitter = new SseEmitter(0L);
         try {
             emitter.send(SseEmitter.event().comment("heartbeat"));
@@ -29,7 +28,6 @@ public class SseService {
         emitters.computeIfAbsent(id, k -> new CopyOnWriteArrayList<>()).add(emitter);
 
         Runnable cleanup = () -> {
-            System.out.println("CLEANING UP...");
             List<SseEmitter> list = emitters.get(id);
             if (list != null) {
                 list.remove(emitter);
@@ -45,7 +43,6 @@ public class SseService {
     }
 
     public void multicast(String id, String eventName, Object data) {
-        System.out.println("HIT " + id);
         emitters.forEach((eId, list) -> {
             if (id.equals(eId)) {
                 list.forEach(emitter -> {
