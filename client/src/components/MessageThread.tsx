@@ -21,6 +21,7 @@ interface MessageThreadProps {
 
 export function MessageThread({ messages, currentNumber, otherParty, onSendMessage }: MessageThreadProps) {
   const scrollViewRef = useRef<ScrollView>(null);
+  const [inputHeight, setInputHeight] = useState(40);
   const [messageBody, setMessageBody] = useState('');
 
   useEffect(() => {
@@ -63,10 +64,16 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
       <View className={`border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800`}>
         <View className={`flex-row p-3 items-end ${Platform.OS !== 'web' ? 'pb-11' : ''}`}>
           <TextInput
-            className={`multiline-textinput px-4 py-2 flex-1 min-h-[40px] max-h-24 mr-3 ${Platform.OS === 'web' ? 'h-10' : ''}`}
+            className={`multiline-textinput px-4 ${Platform.OS === 'android' ? 'pb-0' : 'py-2'} flex-1 mr-3 min-h-[40px] max-h-24`}
+            style={Platform.OS === 'web' ? { height: Math.min(inputHeight, 96) } : undefined}
             placeholder="Write a message..."
             value={messageBody}
             onChangeText={setMessageBody}
+            onContentSizeChange={(e) => {
+              if (Platform.OS === 'web') {
+                setInputHeight(e.nativeEvent.contentSize.height);
+              }
+            }}
             multiline
             maxLength={1600}
             placeholderTextColor={brandColors.placeholder}

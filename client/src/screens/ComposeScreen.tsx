@@ -85,7 +85,7 @@ export default function ComposeScreen() {
         <View className="mb-5">
           <Text className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">Message:</Text>
           <TextInput
-            className="multiline-textinput min-h-[150px]"
+            className="multiline-textinput p-3 min-h-[150px]"
             value={body}
             onChangeText={setBody}
             placeholder="Write a message..."
