@@ -15,6 +15,8 @@ export default function ComposeScreen() {
   const [recipient, setRecipient] = useState(to || '');
   const [body, setBody] = useState('');
 
+  console.log(to);
+
   const handleSend = async () => {
     if (!recipient.trim() || !body.trim()) {
       if (Platform.OS === 'web') {

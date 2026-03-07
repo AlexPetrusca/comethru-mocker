@@ -80,7 +80,7 @@ export default function ConversationsScreen() {
 
       <TouchableOpacity
         className="absolute bottom-5 right-5 bg-blue-500 rounded-full py-3 px-6 shadow-lg"
-        onPress={() => router.push(`/compose?to=${phoneNumber}`)}
+        onPress={() => router.push(`/compose?to=${encodeURIComponent(phoneNumber)}`)}
       >
         <Text className="text-white text-base font-semibold">New Message</Text>
       </TouchableOpacity>
