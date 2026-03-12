@@ -13,9 +13,9 @@ export default function SettingsScreen() {
   const { storage, setItem } = useStorage();
   const { publish } = usePubSub();
   const { colorScheme, setColorScheme } = useColorScheme();
-  const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL_KEY] || api.defaults.baseURL as string);
-  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
-  const [themeMode, setThemeMode] = useState(storage[StorageKey.THEME_KEY] || ThemeMode.SYSTEM);
+  const [apiUrl, setApiUrl] = useState(storage[StorageKey.API_URL] || api.defaults.baseURL as string);
+  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [themeMode, setThemeMode] = useState(storage[StorageKey.THEME] || ThemeMode.SYSTEM);
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   useLayoutEffect(() => {
@@ -38,7 +38,7 @@ export default function SettingsScreen() {
 
   const handleSavePhoneNumber = async () => {
     try {
-      await setItem(StorageKey.PHONE_NUMBER_KEY, phoneNumber);
+      await setItem(StorageKey.PHONE_NUMBER, phoneNumber);
       publish(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber);
       Alert.alert('Success', 'Phone number saved!');
     } catch (error) {
@@ -49,7 +49,7 @@ export default function SettingsScreen() {
   const handleSaveApiUrl = async () => {
     try {
       api.defaults.baseURL = apiUrl;
-      await setItem(StorageKey.API_URL_KEY, apiUrl);
+      await setItem(StorageKey.API_URL, apiUrl);
       publish(PubSubEvent.API_URL_CHANGED, apiUrl);
       Alert.alert('Success', 'API URL saved!');
     } catch (error) {
@@ -59,7 +59,7 @@ export default function SettingsScreen() {
 
   const handleSetThemeMode = async (mode: ThemeMode) => {
     setThemeMode(mode);
-    await setItem(StorageKey.THEME_KEY, mode);
+    await setItem(StorageKey.THEME, mode);
 
     if (mode === ThemeMode.SYSTEM) {
       setColorScheme('system');

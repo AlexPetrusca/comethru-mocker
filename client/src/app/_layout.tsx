@@ -12,6 +12,7 @@ import {api} from "@/src/services";
 import { StorageKey, ThemeMode } from "@/src/constants";
 import { PubSubProvider, SseProvider, StorageProvider } from "@/src/providers";
 import {themeColors} from '@/src/constants/Colors';
+import { StorageContextData } from "@/src/providers/contexts";
 
 export {
   ErrorBoundary,
@@ -26,12 +27,12 @@ export default function RootLayout() {
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [themeLoaded, setThemeLoaded] = useState(false);
-  const [initialStorage, setInitialStorage] = useState({})
+  const [initialStorage, setInitialStorage] = useState<StorageContextData>({} as StorageContextData);
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
-      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME_KEY);
+      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME);
       if (savedTheme === ThemeMode.LIGHT || savedTheme === ThemeMode.DARK) {
         setColorScheme(savedTheme);
       } else {
@@ -46,11 +47,11 @@ export default function RootLayout() {
     const initializeApp = async () => {
       const keys = await AsyncStorage.getAllKeys();
       const entries = await AsyncStorage.multiGet(keys);
-      const data: Record<string, string | null> = {};
-      entries.forEach(([key, value]) => { data[key] = value; });
+      const data: StorageContextData = {} as StorageContextData;
+      entries.forEach(([key, value]) => { data[key as StorageKey] = value; });
       setInitialStorage(data);
 
-      const savedApiUrl = data[StorageKey.API_URL_KEY];
+      const savedApiUrl = data[StorageKey.API_URL];
       if (savedApiUrl != null) {
         api.defaults.baseURL = savedApiUrl;
       }
@@ -75,7 +76,7 @@ export default function RootLayout() {
   return <RootLayoutNav initialStorage={initialStorage} />;
 }
 
-function RootLayoutNav({ initialStorage }: { initialStorage?: Record<string, string | null> }) {
+function RootLayoutNav({ initialStorage }: { initialStorage?: StorageContextData }) {
   const { colorScheme } = useNativeWindColorScheme();
   const theme = themeColors[colorScheme || ThemeMode.LIGHT];
 

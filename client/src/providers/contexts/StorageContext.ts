@@ -5,8 +5,8 @@ export type StorageContextData = Record<StorageKey, string | null>;
 
 export type StorageContextType = {
   storage: StorageContextData;
-  setItem: (key: string, value: string) => Promise<void>;
-  removeItem: (key: string) => Promise<void>;
+  setItem: (key: StorageKey, value: string) => Promise<void>;
+  removeItem: (key: StorageKey) => Promise<void>;
 };
 
 const defaultStorage = Object.values(StorageKey).reduce(

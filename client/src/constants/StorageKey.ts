@@ -1,7 +1,7 @@
 enum StorageKey {
-  API_URL_KEY = '@comethru_api_url',
-  PHONE_NUMBER_KEY = '@comethru_phone_number',
-  THEME_KEY = '@comethru_theme',
+  API_URL = '@comethru_api_url',
+  PHONE_NUMBER = '@comethru_phone_number',
+  THEME = '@comethru_theme',
 }
 
 export default StorageKey;

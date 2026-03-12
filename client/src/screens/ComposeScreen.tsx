@@ -11,7 +11,7 @@ export default function ComposeScreen() {
   const navigation = useNavigation();
   const { storage } = useStorage();
   const { to } = useLocalSearchParams<{ to?: string }>();
-  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
+  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
   const [recipient, setRecipient] = useState(to || '');
   const [body, setBody] = useState('');
 

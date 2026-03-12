@@ -9,7 +9,7 @@ import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 export default function ConversationsScreen() {
   const router = useRouter();
   const { storage } = useStorage();
-  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
+  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 

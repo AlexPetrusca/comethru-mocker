@@ -9,7 +9,7 @@ import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 export default function MessageThreadScreen() {
   const { storage } = useStorage();
   const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
-  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER_KEY] || PhoneNumber.DEFAULT);
+  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
