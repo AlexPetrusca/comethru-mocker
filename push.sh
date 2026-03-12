@@ -13,7 +13,7 @@ fi
 echo "Building and pushing Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
 
 # Build the Docker image
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./server
 
 # IMAGE_TAG as latest if not already
 if [ "$IMAGE_TAG" != "latest" ]; then
