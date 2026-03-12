@@ -13,6 +13,7 @@ import { StorageKey, ThemeMode } from "@/src/constants";
 import { PubSubProvider, SseProvider, StorageProvider } from "@/src/providers";
 import {themeColors} from '@/src/constants/Colors';
 import { StorageContextData } from "@/src/providers/contexts";
+import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 
 export {
   ErrorBoundary,
@@ -98,6 +99,7 @@ function RootLayoutNav({ initialStorage }: { initialStorage?: StorageContextData
         <SseProvider>
           <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
             <View className="flex-1 bg-white dark:bg-gray-900">
+              <SseStatusBanner />
               <Stack>
                 <Stack.Screen
                   name="(tabs)"

@@ -8,8 +8,8 @@ import { useStorage } from "@/src/providers/StorageProvider";
 type SseEvents = 'connected' | 'message' | 'heartbeat';
 export type SseStatus = 'connected' | 'disconnected' | 'reconnecting';
 
-const MAX_RETRY_DELAY = 30000;
-const INITIAL_RETRY_DELAY = 1000;
+const MAX_RETRY_DELAY = 30000; // 30 seconds
+const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function SseProvider({ children }: { children: ReactNode }) {
   const { storage } = useStorage();
