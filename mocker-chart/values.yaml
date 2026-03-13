@@ -3,12 +3,10 @@ image:
   repository: alexpetrusca/comethru-mocker
   tag: latest
   pullPolicy: IfNotPresent
-
 service:
   type: ClusterIP
   port: 8090
   targetPort: 8090
-
 h2Service:
   type: ClusterIP
   port: 8092
