@@ -28,3 +28,14 @@ if [ "$IMAGE_TAG" != "latest" ]; then
 fi
 
 echo "Successfully pushed ${IMAGE_NAME}:${IMAGE_TAG} to Docker Hub"
+echo
+
+# Push to GitHub Container Registry (GHCR)
+cd mocker-chart || exit
+
+VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
+rm -f mocker-${VERSION}.tgz
+helm package .
+helm push mocker-${VERSION}.tgz oci://ghcr.io/alexpetrusca
+
+echo "Successfully pushed mocker-${VERSION}.tgz to GitHub Container Registry"

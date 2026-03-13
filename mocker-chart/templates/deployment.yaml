@@ -1,34 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-mocker
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-mocker
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Release.Name }}-mocker
     spec:
       containers:
         - name: mocker
-          image: 'alexpetrusca/comethru-mocker:{{ .Values.image.tag }}'
-          imagePullPolicy: Always
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8090
-            - containerPort: 8092
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+            - name: h2
+              containerPort: {{ .Values.h2Service.targetPort }}
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 8090
+              port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 8090
+              port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 30
             periodSeconds: 10
           volumeMounts:

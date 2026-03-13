@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-mocker
+spec:
+  selector:
+    app: {{ .Release.Name }}-mocker
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+    - name: h2
+      port: {{ .Values.h2Service.port }}
+      targetPort: {{ .Values.h2Service.targetPort }}
