@@ -33,7 +33,7 @@ export default function ComposeScreen() {
         to: recipient.trim(),
         body: body.trim(),
       });
-      router.back();
+      router.push(`/messages/${encodeURIComponent(recipient.trim())}`);
     } catch (error) {
       if (Platform.OS === 'web') {
         window.alert('Failed to send message');
