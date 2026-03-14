@@ -55,28 +55,28 @@ export default function ConversationsScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-gray-900">
-      {conversations.length === 0 ? (
-        <View className="flex-1 items-center justify-center p-8 bg-white dark:bg-gray-900">
-          <Text className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">No Conversations</Text>
-          <Text className="text-base text-center text-gray-500 dark:text-gray-400">
-            Start a conversation by sending a message
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={conversations}
-          keyExtractor={(item) => item.otherParty}
-          renderItem={({ item }) => (
-            <ConversationListItem
-              conversation={item}
-              onPress={() => handleConversationPress(item.otherParty)}
-            />
-          )}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
-      )}
+      <FlatList
+        data={conversations}
+        keyExtractor={(item) => item.otherParty}
+        renderItem={({ item }) => (
+          <ConversationListItem
+            conversation={item}
+            onPress={() => handleConversationPress(item.otherParty)}
+          />
+        )}
+        ListEmptyComponent={() => (
+          <View className="flex-1 items-center justify-center p-8" style={{ minHeight: '100%' }}>
+            <Text className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">No Conversations</Text>
+            <Text className="text-base text-center text-gray-500 dark:text-gray-400">
+              Start a conversation by sending a message
+            </Text>
+          </View>
+        )}
+        contentContainerStyle={conversations.length === 0 ? { flexGrow: 1 } : undefined}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
 
       <TouchableOpacity
         className="absolute bottom-5 right-5 bg-blue-500 rounded-full py-3 px-6 shadow-lg"
