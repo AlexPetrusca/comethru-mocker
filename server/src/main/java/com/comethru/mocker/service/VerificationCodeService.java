@@ -2,6 +2,7 @@ package com.comethru.mocker.service;
 
 import com.comethru.mocker.entity.VerificationCode;
 import com.comethru.mocker.repository.VerificationCodeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VerificationCodeService {
 
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -17,11 +19,7 @@ public class VerificationCodeService {
 
     private final VerificationCodeRepository verificationCodeRepository;
     private final MessageService messageService;
-
-    public VerificationCodeService(VerificationCodeRepository verificationCodeRepository, MessageService messageService) {
-        this.verificationCodeRepository = verificationCodeRepository;
-        this.messageService = messageService;
-    }
+    private final ExpoNotificationService expoNotificationService;
 
     public VerificationCode sendVerificationCode(String to) {
         String code = generateCode();
@@ -30,6 +28,8 @@ public class VerificationCodeService {
 
         String messageBody = "Your ComeThru verification code is: " + code;
         messageService.sendMessage(VERIFICATION_SENDER, to, messageBody);
+
+        expoNotificationService.notifyPhoneNumber(to, "Verification Code", messageBody);
 
         return verificationCode;
     }

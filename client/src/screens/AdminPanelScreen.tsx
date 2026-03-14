@@ -19,8 +19,8 @@ export default function AdminPanelScreen() {
     message: string
   } | null>(null);
 
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
-    setPhoneNumber(phoneNumber);
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
+    setPhoneNumber(newPhoneNumber);
   });
 
   const handleSendVerification = async () => {

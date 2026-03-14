@@ -2,6 +2,7 @@ package com.comethru.mocker.service;
 
 import com.comethru.mocker.entity.Message;
 import com.comethru.mocker.repository.MessageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -12,15 +13,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
     private final MessageRepository messageRepository;
     private final SseService sseService;
-
-    public MessageService(MessageRepository messageRepository, SseService sseService) {
-        this.messageRepository = messageRepository;
-        this.sseService = sseService;
-    }
+    private final ExpoNotificationService expoNotificationService;
 
     public List<Message> getAllMessages() {
         return messageRepository.findAll();
@@ -42,10 +40,14 @@ public class MessageService {
 
     public Message sendMessage(String from, String to, String body) {
         Message message = messageRepository.save(new Message(from, to, body));
+
         sseService.multicast(to, "message", message);
         if (!to.equals(from)) {
             sseService.multicast(from, "message", message);
         }
+
+        expoNotificationService.notifyPhoneNumber(to, "New message from " + from, body);
+
         return message;
     }
 

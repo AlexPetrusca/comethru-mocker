@@ -1,7 +1,15 @@
 package com.comethru.mocker.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.Instant;
+
+@Getter
+@Setter
+@NoArgsConstructor
 
 @Entity
 @Table(name = "verification_codes")
@@ -26,14 +34,19 @@ public class VerificationCode {
     @Column(nullable = false)
     private boolean verified = false;
 
-    public VerificationCode() {
+    @Transient
+    private int expirationMinutes;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        expiresAt = Instant.now().plusSeconds(expirationMinutes * 60L);
     }
 
     public VerificationCode(String to, String code, int expirationMinutes) {
         this.to = to;
         this.code = code;
-        this.createdAt = Instant.now();
-        this.expiresAt = Instant.now().plusSeconds(expirationMinutes * 60L);
+        this.expirationMinutes = expirationMinutes;
     }
 
     public boolean isExpired() {
@@ -46,29 +59,5 @@ public class VerificationCode {
 
     public void markVerified() {
         this.verified = true;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public boolean isVerified() {
-        return verified;
     }
 }

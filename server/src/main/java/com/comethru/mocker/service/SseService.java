@@ -14,7 +14,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Service
 public class SseService {
 
-    private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
+    private final Map<String, List<SseEmitter>> emitters;
+
+    public SseService() {
+        emitters = new ConcurrentHashMap<>();
+    }
 
     public SseEmitter createEmitter(String id) {
         SseEmitter emitter = new SseEmitter(0L);

@@ -5,7 +5,7 @@ import { usePubSub, useSubscription } from "@/src/providers/PubSubProvider";
 import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 import { useStorage } from "@/src/providers/StorageProvider";
 
-type SseEvents = 'connected' | 'message' | 'heartbeat';
+type SseEvents = 'message';
 export type SseStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 const MAX_RETRY_DELAY = 30000; // 30 seconds
@@ -20,17 +20,18 @@ export function SseProvider({ children }: { children: ReactNode }) {
   const retryDelay = useRef(INITIAL_RETRY_DELAY);
   const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, number => {
-    setPhoneNumber(number);
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
+    setPhoneNumber(newPhoneNumber);
   })
 
   const connect = () => {
     // Clean up existing connection
-    if (esRef.current) {
+    if (esRef.current != null) {
       esRef.current.removeAllEventListeners();
       esRef.current.close();
     }
 
+    console.log(`${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber)}`);
     const es = new EventSource<SseEvents>(
       `${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber)}`
     );
@@ -41,10 +42,6 @@ export function SseProvider({ children }: { children: ReactNode }) {
       setStatus('connected');
       retryDelay.current = INITIAL_RETRY_DELAY; // reset backoff on success
     });
-
-    // es.addEventListener('connected', (e) => {
-    //   publish();
-    // });
 
     es.addEventListener('message', (e) => {
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data as string));

@@ -1,0 +1,102 @@
+import { useContext, useEffect, useRef, useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { NotificationContext } from "@/src/providers/contexts";
+import { usePubSub, useSubscription } from "@/src/providers/PubSubProvider";
+import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
+import { Platform } from "react-native";
+import { pushTokenService } from "@/src/services/push-tokens";
+import { useStorage } from "@/src/providers/StorageProvider";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false
+  })
+});
+
+const IS_IOS_SIMULATOR = !Device.isDevice && Platform.OS === 'ios';
+
+export function NotificationProvider({ children }: { children: React.ReactNode }) {
+  const { publish } = usePubSub();
+  const { storage } = useStorage();
+
+  const [phoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [token, setToken] = useState<string | null>(null);
+  const [notification, setNotification] = useState<Notifications.Notification | null>(null);
+
+  const notificationTap = Notifications.useLastNotificationResponse();
+  const notificationListener = useRef<Notifications.EventSubscription | null>(null);
+
+  async function registerForPushNotifications(): Promise<string | null> {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== 'granted') {
+      console.warn('Permission not granted for push notifications');
+      return null;
+    }
+
+    try {
+      const pushToken = await Notifications.getExpoPushTokenAsync();
+      return pushToken.data;
+    } catch (e) {
+      console.warn('Failed to get push token:', e);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    if (IS_IOS_SIMULATOR) {
+      console.warn('Push notifications not supported on iOS simulator');
+      return;
+    }
+
+    registerForPushNotifications().then(pushToken => {
+      if (pushToken) {
+        setToken(pushToken);
+        console.log('Register Push notification listener', pushToken, phoneNumber);
+        pushTokenService.register(phoneNumber);
+      }
+    });
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification listener', notification);
+      setNotification(notification);
+      publish(PubSubEvent.NOTIFICATION_RECEIVED, notification);
+    });
+
+    return () => {
+      notificationListener.current?.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (notificationTap != null) {
+      console.log('Notification tap listener', notificationTap);
+      publish(PubSubEvent.NOTIFICATION_TAPPED, notificationTap);
+    }
+  }, [notificationTap]);
+
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
+    if (IS_IOS_SIMULATOR) return;
+
+    pushTokenService.register(newPhoneNumber);
+  });
+
+  return (
+    <NotificationContext.Provider value={{ token, notification, notificationTap }}>
+      {children}
+    </NotificationContext.Provider>
+  );
+}
+
+export const useNotifications = () => useContext(NotificationContext);

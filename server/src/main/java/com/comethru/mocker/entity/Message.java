@@ -1,7 +1,15 @@
 package com.comethru.mocker.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.Instant;
+
+@Getter
+@Setter
+@NoArgsConstructor
 
 @Entity
 @Table(name = "messages")
@@ -23,33 +31,14 @@ public class Message {
     @Column(nullable = false)
     private Instant sentAt;
 
-    public Message() {
+    @PrePersist
+    protected void onCreate() {
+        sentAt = Instant.now();
     }
 
     public Message(String from, String to, String body) {
         this.from = from;
         this.to = to;
         this.body = body;
-        this.sentAt = Instant.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public Instant getSentAt() {
-        return sentAt;
     }
 }

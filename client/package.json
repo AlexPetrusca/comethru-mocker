@@ -3,11 +3,13 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --port 8091",
-    "android": "expo start --android --port 8091",
-    "ios": "expo start --ios --port 8091",
+    "start": "expo start --port 8091 --dev-client",
+    "android": "expo start --android --port 8091 --dev-client",
+    "ios": "expo start --ios --port 8091 --dev-client",
     "web": "expo start --web --port 8091",
     "desktop": "expo start --web --port 8091 --no-dev",
+    "build-android": "eas build --profile development --platform android --local --output ./build/android.apk",
+    "build-ios": "eas build --profile development-simulator --platform ios --local --output ./build/ios.tar.gz",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -16,9 +18,11 @@
     "axios": "^1.6.0",
     "expo": "~55.0.5",
     "expo-constants": "~55.0.7",
+    "expo-dev-client": "~55.0.16",
     "expo-device": "~55.0.9",
     "expo-font": "~55.0.4",
     "expo-linking": "~55.0.7",
+    "expo-notifications": "~55.0.12",
     "expo-router": "~55.0.5",
     "expo-splash-screen": "~55.0.10",
     "expo-status-bar": "~55.0.4",

@@ -18,6 +18,10 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Firebase
+comethru-mocker-firebase-adminsdk-*.json
+firebase-service-account.json
+
 # Metro
 .metro-health-check*
 

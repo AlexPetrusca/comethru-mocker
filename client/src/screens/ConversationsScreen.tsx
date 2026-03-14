@@ -13,8 +13,8 @@ export default function ConversationsScreen() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, phoneNumber => {
-    setPhoneNumber(phoneNumber);
+  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
+    setPhoneNumber(newPhoneNumber);
   });
 
   useSubscription(PubSubEvent.MESSAGE_RECEIVED, () => {

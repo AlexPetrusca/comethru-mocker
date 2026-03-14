@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "996062920256",
+    "project_id": "comethru-mocker",
+    "storage_bucket": "comethru-mocker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996062920256:android:6afcb9aa37a4ae235ce9a5",
+        "android_client_info": {
+          "package_name": "com.comethru.mocker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5men9tcmoZO81F9j_42iXE-HDYTpMVQU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
