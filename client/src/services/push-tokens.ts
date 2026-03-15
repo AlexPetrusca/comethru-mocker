@@ -20,8 +20,6 @@ export const pushTokenService = {
 
   async unregister(): Promise<void> {
     const token = await Notifications.getExpoPushTokenAsync();
-    await api.delete('/push-tokens', {
-      data: { token: token.data },
-    });
+    await api.delete(`/push-tokens/${encodeURIComponent(token.data)}`);
   },
 };

@@ -18,9 +18,9 @@ public class PushTokenController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> unregister(@RequestBody PushTokenRequest request) {
-        pushTokenService.deleteToken(request.token());
+    @DeleteMapping("/{token}")
+    public ResponseEntity<Void> unregister(@PathVariable String token) {
+        pushTokenService.deleteToken(token);
         return ResponseEntity.ok().build();
     }
 

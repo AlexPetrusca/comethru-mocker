@@ -19,6 +19,7 @@ public class ExpoNotificationService {
 
     public void notifyPhoneNumber(String phoneNumber, String title, String body) {
         List<PushToken> tokens = pushTokenService.getTokensForPhoneNumber(phoneNumber);
+        System.out.println("[PUSH] Send to: " + tokens);
 
         List<Map<String, String>> messages = tokens.stream()
                 .map(token -> Map.of(
@@ -36,8 +37,8 @@ public class ExpoNotificationService {
                 .bodyValue(messages)
                 .retrieve()
                 .bodyToMono(String.class)
-//                .doOnNext(response -> System.out.println("[PUSH] Expo response: " + response))
-//                .doOnError(error -> System.out.println("[PUSH] Expo error: " + error.getMessage()))
+                .doOnNext(response -> System.out.println("[PUSH] Expo response: " + response))
+                .doOnError(error -> System.out.println("[PUSH] Expo error: " + error.getMessage()))
                 .subscribe(
                         response -> handleReceipts(response, tokens),
                         error -> System.err.println("Failed to send push notification: " + error.getMessage())

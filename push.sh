@@ -34,7 +34,7 @@ echo
 cd mocker-chart || exit
 
 VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
-rm -f mocker-${VERSION}.tgz
+rm -rf mocker-*.tgz
 helm package .
 helm push mocker-${VERSION}.tgz oci://ghcr.io/alexpetrusca
 
