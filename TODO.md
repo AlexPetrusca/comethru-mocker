@@ -16,6 +16,12 @@
 
 - If message self, notification sent to self
 - Send new message, navigate back brings you to compose page
+- Don't receive message notifications for the current conversation thread you're on
+  - Expo-notifications lets you intercept incoming notifications before the user sees them
+  - You need to track some global state to know what page you're on in the notification listener
+- Clear multiple notifications from the same conversation on tap
+  - If we receive 3 messages while phone is locked, those notifications will sit in notification tray
+  - When the user taps one or navigates to that specific chat, delete those old notifications so they don't clog up
 
 # Integration
 
