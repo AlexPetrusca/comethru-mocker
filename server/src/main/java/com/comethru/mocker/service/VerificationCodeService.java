@@ -29,7 +29,7 @@ public class VerificationCodeService {
         String messageBody = "Your ComeThru verification code is: " + code;
         messageService.sendMessage(VERIFICATION_SENDER, to, messageBody);
 
-        expoNotificationService.notifyPhoneNumber(to, "Verification Code", messageBody);
+        expoNotificationService.notifyNewMessage(to, "Verification Code", messageBody, VERIFICATION_SENDER);
 
         return verificationCode;
     }

@@ -1,5 +1,6 @@
 package com.comethru.mocker.service;
 
+import com.comethru.mocker.dto.ExpoPushRequest;
 import com.comethru.mocker.entity.PushToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -17,16 +17,12 @@ public class ExpoNotificationService {
     private final PushTokenService pushTokenService;
     private final WebClient webClient = WebClient.create();
 
-    public void notifyPhoneNumber(String phoneNumber, String title, String body) {
-        List<PushToken> tokens = pushTokenService.getTokensForPhoneNumber(phoneNumber);
+    public void notifyNewMessage(String to, String title, String body, String from) {
+        List<PushToken> tokens = pushTokenService.getTokensForPhoneNumber(to);
         System.out.println("[PUSH] Send to: " + tokens);
 
-        List<Map<String, String>> messages = tokens.stream()
-                .map(token -> Map.of(
-                        "to", token.getToken(),
-                        "title", title,
-                        "body", body
-                ))
+        List<ExpoPushRequest> messages = tokens.stream()
+                .map(token -> ExpoPushRequest.conversation(token.getToken(), title, body, from, to))
                 .toList();
 
         if (messages.isEmpty()) return;

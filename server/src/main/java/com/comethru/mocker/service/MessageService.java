@@ -46,7 +46,7 @@ public class MessageService {
             sseService.multicast(from, "message", message);
         }
 
-        expoNotificationService.notifyPhoneNumber(to, "New message from " + from, body);
+        expoNotificationService.notifyNewMessage(to, "New message from " + from, body, from);
 
         return message;
     }

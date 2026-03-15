@@ -7,6 +7,7 @@ import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 import { Platform } from "react-native";
 import { pushTokenService } from "@/src/services/push-tokens";
 import { useStorage } from "@/src/providers/StorageProvider";
+import { useRouter } from 'expo-router';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -21,6 +22,7 @@ Notifications.setNotificationHandler({
 const IS_IOS_SIMULATOR = !Device.isDevice && Platform.OS === 'ios';
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const { publish } = usePubSub();
   const { storage } = useStorage();
 
@@ -69,7 +71,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification listener', notification);
+      console.log('Notification', notification);
       setNotification(notification);
       publish(PubSubEvent.NOTIFICATION_RECEIVED, notification);
     });
@@ -81,7 +83,16 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     if (notificationTap != null) {
-      console.log('Notification tap listener', notificationTap);
+      console.log("Notification Tap:", notificationTap)
+      const data = notificationTap.notification.request.content.data;
+
+      // Navigate to conversation if notification contains conversation data
+      if (data?.type === 'conversation') {
+        const otherParty = data.from as string;
+        console.log('Navigating to conversation with:', otherParty);
+        router.push(`/messages/${encodeURIComponent(otherParty)}`);
+      }
+
       publish(PubSubEvent.NOTIFICATION_TAPPED, notificationTap);
     }
   }, [notificationTap]);
