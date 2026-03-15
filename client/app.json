@@ -23,6 +23,7 @@
     "android": {
       "package": "com.comethru.mocker",
       "googleServicesFile": "./google-services.json",
+      "softwareKeyboardLayoutMode": "adjustResize",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
