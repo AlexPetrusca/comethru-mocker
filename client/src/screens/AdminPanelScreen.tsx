@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
 import { verificationService, messagesService } from '@/src/services';
-import { StorageKey, PhoneNumber, PubSubEvent } from "@/src/constants";
-import { useStorage, useSubscription } from "@/src/providers";
+import { StorageKey, PhoneNumber } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
+import { useMMKVString } from "react-native-mmkv";
 
 export default function AdminPanelScreen() {
-  const { storage } = useStorage();
-  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [verificationCode, setVerificationCode] = useState('');
   const [verifyStatus, setVerifyStatus] = useState<{
     type: 'success' | 'error';
@@ -19,14 +18,10 @@ export default function AdminPanelScreen() {
     message: string
   } | null>(null);
 
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
-    setPhoneNumber(newPhoneNumber);
-  });
-
   const handleSendVerification = async () => {
     try {
-      await verificationService.send({ to: phoneNumber });
-      const messages = await messagesService.getBetween(PhoneNumber.VERIFICATION, phoneNumber);
+      await verificationService.send({ to: phoneNumber! });
+      const messages = await messagesService.getBetween(PhoneNumber.VERIFICATION, phoneNumber!);
 
       const lastMessage = messages[messages.length - 1];
       const match = lastMessage.body.match(/\d{6}/);
@@ -46,7 +41,7 @@ export default function AdminPanelScreen() {
 
     try {
       const result = await verificationService.verify({
-        to: phoneNumber,
+        to: phoneNumber!,
         code: verificationCode,
       });
       if (result.valid) {
@@ -62,7 +57,7 @@ export default function AdminPanelScreen() {
 
   return (
     <ScrollView className="flex-1 p-4 bg-white dark:bg-gray-900">
-      <PhoneDisplay phoneNumber={phoneNumber} label="Your Phone Number" />
+      <PhoneDisplay phoneNumber={phoneNumber!} label="Your Phone Number" />
 
       <View className="mb-6">
         <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Verification Code</Text>

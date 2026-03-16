@@ -17,12 +17,12 @@ interface Message {
 
 interface MessageThreadProps {
   messages: Message[];
-  currentNumber: string;
+  phoneNumber: string;
   otherParty: string;
   onSendMessage: (body: string) => Promise<void>;
 }
 
-export function MessageThread({ messages, currentNumber, otherParty, onSendMessage }: MessageThreadProps) {
+export function MessageThread({ messages, phoneNumber, onSendMessage }: MessageThreadProps) {
   const scrollViewRef = useRef<AnimatedScrollView>(null);
   const { bottom } = useSafeAreaInsets();
   const [inputHeight, setInputHeight] = useState(40);
@@ -56,7 +56,7 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
             key={message.id}
             body={message.body}
             from={message.from}
-            currentNumber={currentNumber}
+            phoneNumber={phoneNumber}
             timestamp={new Date(message.sentAt).toLocaleString()}
           />
         ))}

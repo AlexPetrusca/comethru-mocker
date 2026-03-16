@@ -9,14 +9,13 @@ import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from "@/src/services";
 import { StorageKey, ThemeMode } from "@/src/constants";
-import { NotificationProvider, PubSubProvider, SseProvider, StorageProvider } from "@/src/providers";
+import { NotificationProvider, PubSubProvider, SseProvider } from "@/src/providers";
 import { themeColors } from '@/src/constants/Colors';
-import { StorageContextData } from "@/src/providers/contexts";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { useNotifications } from "@/src/providers/NotificationProvider";
+import { storage } from "@/src/services/storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,41 +26,20 @@ export default function RootLayout() {
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  const [initialStorage, setInitialStorage] = useState<StorageContextData>({} as StorageContextData);
-  const [themeLoaded, setThemeLoaded] = useState(false);
-  const [appIsReady, setAppIsReady] = useState(false);
-
   const theme = themeColors[colorScheme || ThemeMode.LIGHT];
 
   useEffect(() => {
-    const initializeApp = async () => {
-      const keys = await AsyncStorage.getAllKeys();
-      const entries = await AsyncStorage.multiGet(keys);
-      const data: StorageContextData = {} as StorageContextData;
-      entries.forEach(([key, value]) => {
-        data[key as StorageKey] = value;
-      });
-      setInitialStorage(data);
-
-      const savedApiUrl = data[StorageKey.API_URL];
-      if (savedApiUrl != null) {
-        api.defaults.baseURL = savedApiUrl;
-      }
-    };
-    initializeApp().finally(() => setAppIsReady(true));
+    api.defaults.baseURL = storage.getString(StorageKey.API_URL);
   }, []);
 
   useEffect(() => {
-    const loadTheme = async () => {
-      const savedTheme = await AsyncStorage.getItem(StorageKey.THEME);
-      if (savedTheme === ThemeMode.LIGHT || savedTheme === ThemeMode.DARK) {
-        setColorScheme(savedTheme);
-      } else {
-        // Default to system preference
-        setColorScheme(deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT);
-      }
-    };
-    loadTheme().finally(() => setThemeLoaded(true))
+    const savedTheme = storage.getString(StorageKey.THEME);
+    if (savedTheme === ThemeMode.LIGHT || savedTheme === ThemeMode.DARK) {
+      setColorScheme(savedTheme);
+    } else {
+      // Default to system preference
+      setColorScheme(deviceColorScheme === ThemeMode.DARK ? ThemeMode.DARK : ThemeMode.LIGHT);
+    }
   }, [deviceColorScheme]);
 
   useEffect(() => {
@@ -74,7 +52,7 @@ export default function RootLayout() {
       }
       document.body.style.backgroundColor = theme.navigationBackground;
     }
-  }, [colorScheme, theme]);
+  }, [colorScheme]);
 
   useEffect(() => {
     if (fontLoaded) {
@@ -90,18 +68,16 @@ export default function RootLayout() {
 
   return (
     <PubSubProvider>
-      <StorageProvider initialData={initialStorage}>
-        <NotificationProvider>
-          <SseProvider>
-            <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
-              <KeyboardProvider>
-                <StatusBar />
-                <RootView theme={theme} isReady={appIsReady && themeLoaded && fontLoaded} />
-              </KeyboardProvider>
-            </ThemeProvider>
-          </SseProvider>
-        </NotificationProvider>
-      </StorageProvider>
+      <NotificationProvider>
+        <SseProvider>
+          <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
+            <KeyboardProvider>
+              <StatusBar />
+              <RootView theme={theme} isReady={fontLoaded} />
+            </KeyboardProvider>
+          </ThemeProvider>
+        </SseProvider>
+      </NotificationProvider>
     </PubSubProvider>
   );
 }

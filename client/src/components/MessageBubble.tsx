@@ -4,12 +4,12 @@ import { View, Text } from 'react-native';
 interface MessageBubbleProps {
   body: string;
   from: string;
-  currentNumber: string;
+  phoneNumber: string;
   timestamp: string;
 }
 
-export function MessageBubble({ body, from, currentNumber, timestamp }: MessageBubbleProps) {
-  const isOutgoing = from === currentNumber;
+export function MessageBubble({ body, from, phoneNumber, timestamp }: MessageBubbleProps) {
+  const isOutgoing = from === phoneNumber;
 
   return (
     <View className={`mx-4 my-1 ${isOutgoing ? 'items-end' : 'items-start'}`}>

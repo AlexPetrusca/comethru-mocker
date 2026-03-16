@@ -1,9 +1,9 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import EventSource from 'react-native-sse';
 import { api } from "@/src/services";
-import { usePubSub, useSubscription } from "@/src/providers/PubSubProvider";
-import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
-import { useStorage } from "@/src/providers/StorageProvider";
+import { usePubSub } from "@/src/providers/PubSubProvider";
+import { PubSubEvent, StorageKey } from "@/src/constants";
+import { useMMKVString } from "react-native-mmkv";
 
 type SseEvents = 'message';
 export type SseStatus = 'connected' | 'disconnected' | 'reconnecting';
@@ -12,17 +12,12 @@ const MAX_RETRY_DELAY = 30000; // 30 seconds
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function SseProvider({ children }: { children: ReactNode }) {
-  const { storage } = useStorage();
   const { publish } = usePubSub();
-  const [phoneNumber, setPhoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [status, setStatus] = useState<SseStatus>('reconnecting');
   const esRef = useRef<EventSource<SseEvents> | null>(null);
   const retryDelay = useRef(INITIAL_RETRY_DELAY);
   const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
-    setPhoneNumber(newPhoneNumber);
-  })
 
   const connect = () => {
     // Clean up existing connection
@@ -31,9 +26,8 @@ export function SseProvider({ children }: { children: ReactNode }) {
       esRef.current.close();
     }
 
-    console.log(`${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber)}`);
     const es = new EventSource<SseEvents>(
-      `${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber)}`
+      `${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber!)}`
     );
 
     esRef.current = es;
@@ -44,7 +38,7 @@ export function SseProvider({ children }: { children: ReactNode }) {
     });
 
     es.addEventListener('message', (e) => {
-      publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data as string));
+      publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
     });
 
     es.addEventListener('error', () => {

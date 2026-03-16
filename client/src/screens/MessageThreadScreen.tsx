@@ -3,48 +3,48 @@ import { ActivityIndicator, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { MessageThread } from '@/src/components';
 import { Message, messagesService } from '@/src/services';
-import { useStorage, useSubscription } from '@/src/providers';
-import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
+import { useSubscription } from '@/src/providers';
+import { PubSubEvent, StorageKey } from "@/src/constants";
+import { useMMKVString } from "react-native-mmkv";
 
 export default function MessageThreadScreen() {
-  const { storage } = useStorage();
   const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
-  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
   useSubscription(PubSubEvent.MESSAGE_RECEIVED, message => {
     const notSentByUs = messages[messages.length - 1].id !== message.id;
-    const isPartOfConversation = (message.to === currentNumber && message.from === otherParty)
-      || (message.to === otherParty && message.from === currentNumber);
+    const isPartOfConversation = (message.to === phoneNumber && message.from === otherParty)
+      || (message.to === otherParty && message.from === phoneNumber);
     if (isPartOfConversation && notSentByUs) {
       setMessages(prev => [...prev, message])
     }
   });
 
   const loadMessages = useCallback(async () => {
-    if (!currentNumber || !otherParty) return;
+    if (!phoneNumber || !otherParty) return;
     try {
-      const data = await messagesService.getBetween(currentNumber, otherParty);
+      const data = await messagesService.getBetween(phoneNumber, otherParty);
       setMessages(data);
     } catch (error) {
       console.error('Failed to load messages:', error);
     } finally {
       setLoading(false);
     }
-  }, [currentNumber, otherParty]);
+  }, [phoneNumber, otherParty]);
 
   useEffect(() => {
-    if (currentNumber) {
+    if (phoneNumber) {
       loadMessages();
     }
-  }, [currentNumber, loadMessages]);
+  }, [phoneNumber, loadMessages]);
 
   const handleSendMessage = async (body: string) => {
-    if (!currentNumber || !otherParty) return;
+    if (!phoneNumber || !otherParty) return;
     try {
       await messagesService.send({
-        from: currentNumber,
+        from: phoneNumber,
         to: otherParty,
         body,
       });
@@ -54,7 +54,7 @@ export default function MessageThreadScreen() {
     }
   };
 
-  if (!currentNumber || loading) {
+  if (!phoneNumber || loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
         <ActivityIndicator size="large" color="#3B82F6" />
@@ -72,7 +72,7 @@ export default function MessageThreadScreen() {
       />
       <MessageThread
         messages={messages}
-        currentNumber={currentNumber}
+        phoneNumber={phoneNumber!}
         otherParty={otherParty}
         onSendMessage={handleSendMessage}
       />

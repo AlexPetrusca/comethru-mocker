@@ -1,17 +1,16 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, TextInput, Alert, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Alert, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useNavigation } from 'expo-router';
 import { messagesService } from '@/src/services';
-import { useStorage } from '@/src/providers';
-import { StorageKey, PhoneNumber } from "@/src/constants";
+import { StorageKey } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
+import { useMMKVString } from "react-native-mmkv";
 
 export default function ComposeScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const { storage } = useStorage();
   const { to } = useLocalSearchParams<{ to?: string }>();
-  const [currentNumber] = useState<string>(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER)
   const [recipient, setRecipient] = useState(to || '');
   const [body, setBody] = useState('');
 
@@ -27,7 +26,7 @@ export default function ComposeScreen() {
 
     try {
       await messagesService.send({
-        from: currentNumber,
+        from: phoneNumber!,
         to: recipient.trim(),
         body: body.trim(),
       });

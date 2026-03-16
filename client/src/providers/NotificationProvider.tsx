@@ -1,13 +1,13 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { NotificationContext } from "@/src/providers/contexts";
-import { usePubSub, useSubscription } from "@/src/providers/PubSubProvider";
-import { PhoneNumber, PubSubEvent, StorageKey } from "@/src/constants";
 import { Platform } from "react-native";
-import { pushTokenService } from "@/src/services/push-tokens";
-import { useStorage } from "@/src/providers/StorageProvider";
+import { useMMKVString } from "react-native-mmkv";
 import { useRouter } from 'expo-router';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { NotificationContext } from "@/src/providers/contexts";
+import { usePubSub } from "@/src/providers/PubSubProvider";
+import { PubSubEvent, StorageKey } from "@/src/constants";
+import { pushTokenService } from "@/src/services/push-tokens";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -24,9 +24,8 @@ const IS_IOS_SIMULATOR = !Device.isDevice && Platform.OS === 'ios';
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { publish } = usePubSub();
-  const { storage } = useStorage();
 
-  const [phoneNumber] = useState(storage[StorageKey.PHONE_NUMBER] || PhoneNumber.DEFAULT);
+  const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [token, setToken] = useState<string | null>(null);
   const [notification, setNotification] = useState<Notifications.Notification | null>(null);
 
@@ -66,7 +65,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       if (pushToken) {
         setToken(pushToken);
         console.log('Register Push notification listener', pushToken, phoneNumber);
-        pushTokenService.register(phoneNumber);
+        pushTokenService.register(phoneNumber!);
       }
     });
 
@@ -97,11 +96,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
   }, [notificationTap]);
 
-  useSubscription(PubSubEvent.PHONE_NUMBER_CHANGED, newPhoneNumber => {
+  useEffect(() => {
     if (IS_IOS_SIMULATOR) return;
-
-    pushTokenService.register(newPhoneNumber);
-  });
+    pushTokenService.register(phoneNumber!);
+  }, [phoneNumber])
 
   return (
     <NotificationContext.Provider value={{ token, notification, notificationTap }}>
