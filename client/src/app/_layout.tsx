@@ -2,20 +2,21 @@ import '@/src/global.css';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { useColorScheme as useDeviceColorScheme, View } from 'react-native';
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from "@/src/services";
-import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
-import { NotificationProvider, PubSubProvider, SseProvider, StorageProvider, useStorage } from "@/src/providers";
+import { StorageKey, ThemeMode } from "@/src/constants";
+import { NotificationProvider, PubSubProvider, SseProvider, StorageProvider } from "@/src/providers";
 import { themeColors } from '@/src/constants/Colors';
 import { StorageContextData } from "@/src/providers/contexts";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { useNotifications } from "@/src/providers/NotificationProvider";
-import { pushTokenService } from "@/src/services/push-tokens";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -93,7 +94,10 @@ export default function RootLayout() {
         <NotificationProvider>
           <SseProvider>
             <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
-              <RootView theme={theme} isReady={appIsReady && themeLoaded && fontLoaded} />
+              <KeyboardProvider>
+                <StatusBar />
+                <RootView theme={theme} isReady={appIsReady && themeLoaded && fontLoaded} />
+              </KeyboardProvider>
             </ThemeProvider>
           </SseProvider>
         </NotificationProvider>

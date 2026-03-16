@@ -27,3 +27,5 @@
 
 - ComeThru needs to route messages to mocker, then we’re done
 - Make iOS build without notification support, so I can put it on my iPhone
+- Update react-native-keyboard-controller to "1.21.0" from "1.21.0-beta.3" when it comes out
+  - Specifically, integrate with KeyboardChatScrollView's "extraContentPadding" prop to handle multiline textinput

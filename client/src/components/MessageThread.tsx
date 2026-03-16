@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { MessageBubble } from './MessageBubble';
-import { brandColors } from "@/src/constants/Colors";
+import { View, TextInput, TouchableOpacity, Platform } from 'react-native';
+import { KeyboardChatScrollView, KeyboardStickyView } from "react-native-keyboard-controller";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { AnimatedScrollView } from "react-native-reanimated/src/component/ScrollView";
 import { Ionicons } from "@expo/vector-icons";
+import { brandColors } from "@/src/constants/Colors";
+import { MessageBubble } from './MessageBubble';
 
 interface Message {
   id: number;
@@ -20,7 +23,8 @@ interface MessageThreadProps {
 }
 
 export function MessageThread({ messages, currentNumber, otherParty, onSendMessage }: MessageThreadProps) {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<AnimatedScrollView>(null);
+  const { bottom } = useSafeAreaInsets();
   const [inputHeight, setInputHeight] = useState(40);
   const [messageBody, setMessageBody] = useState('');
 
@@ -39,16 +43,13 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white dark:bg-gray-900"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <ScrollView
+    <View className="flex-1 bg-white dark:bg-gray-900">
+      <KeyboardChatScrollView
         ref={scrollViewRef}
         className="flex-1"
         contentContainerClassName="py-4"
         showsVerticalScrollIndicator={true}
+        offset={bottom}
       >
         {messages.map((message) => (
           <MessageBubble
@@ -59,12 +60,18 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
             timestamp={new Date(message.sentAt).toLocaleString()}
           />
         ))}
-      </ScrollView>
+      </KeyboardChatScrollView>
 
-      <View className={`border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800`}>
-        <View className={`flex-row p-3 items-end ${Platform.OS !== 'web' ? 'pb-11' : ''}`}>
+      <KeyboardStickyView
+        className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
+        offset={{ closed: 0, opened: bottom }}
+      >
+        <SafeAreaView className="flex-row p-3 items-end" mode={"padding"} edges={['bottom']}>
           <TextInput
-            className={`multiline-textinput px-4 ${Platform.OS === 'android' ? 'pb-0' : 'py-2'} flex-1 mr-3 min-h-[40px] max-h-24`}
+            className={`
+              multiline-textinput px-4 flex-1 mr-3 min-h-[40px] max-h-24
+              ${Platform.OS === 'android' ? 'pb-0' : 'py-2'}
+            `}
             style={Platform.OS === 'web' ? { height: Math.min(inputHeight, 96) } : undefined}
             placeholder="Write a message..."
             value={messageBody}
@@ -80,14 +87,17 @@ export function MessageThread({ messages, currentNumber, otherParty, onSendMessa
             textAlignVertical="top"
           />
           <TouchableOpacity
-            className={`rounded-full justify-center items-center w-10 h-10 mb-0.5 ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}`}
+            className={`
+              rounded-full justify-center items-center w-10 h-10 mb-0.5
+              ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}
+            `}
             onPress={handleSend}
             disabled={!messageBody.trim()}
           >
             <Ionicons name="send" size={16} color='white' />
           </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+        </SafeAreaView>
+      </KeyboardStickyView>
+    </View>
   );
 }
