@@ -70,7 +70,7 @@ export function MessageThread({ messages, phoneNumber, onSendMessage }: MessageT
           <TextInput
             className={`
               multiline-textinput px-4 flex-1 mr-3 min-h-[40px] max-h-24
-              ${Platform.OS === 'android' ? 'pb-0' : 'py-2'}
+              ${Platform.OS === 'android' ? 'pb-2.5' : 'py-2'}
             `}
             style={Platform.OS === 'web' ? { height: Math.min(inputHeight, 96) } : undefined}
             placeholder="Write a message..."
@@ -88,13 +88,14 @@ export function MessageThread({ messages, phoneNumber, onSendMessage }: MessageT
           />
           <TouchableOpacity
             className={`
-              rounded-full justify-center items-center w-10 h-10 mb-0.5
+              rounded-full justify-center items-center
+              ${Platform.OS === 'android' ? 'w-12 h-12' : 'w-11 h-11 mb-0.5'}
               ${messageBody.trim() ? 'bg-blue-500' : 'bg-gray-300'}
             `}
             onPress={handleSend}
             disabled={!messageBody.trim()}
           >
-            <Ionicons name="send" size={16} color='white' />
+            <Ionicons name="send" size={18} color='white' />
           </TouchableOpacity>
         </SafeAreaView>
       </KeyboardStickyView>
