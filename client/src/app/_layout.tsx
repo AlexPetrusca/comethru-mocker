@@ -10,7 +10,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { api } from "@/src/services";
-import { StorageKey, ThemeMode } from "@/src/constants";
+import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
+import { API_BASE_URL } from "@/src/services/api";
 import { NotificationProvider, PubSubProvider, SseProvider } from "@/src/providers";
 import { themeColors } from '@/src/constants/Colors';
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
@@ -25,11 +26,22 @@ export default function RootLayout() {
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const [appIsReady, setAppIsReady] = useState(false);
 
   const theme = themeColors[colorScheme || ThemeMode.LIGHT];
 
   useEffect(() => {
+    if (!storage.contains(StorageKey.API_URL)) {
+      storage.set(StorageKey.API_URL, API_BASE_URL);
+    }
+    if (!storage.contains(StorageKey.PHONE_NUMBER)) {
+      storage.set(StorageKey.PHONE_NUMBER, PhoneNumber.DEFAULT);
+    }
+    if (!storage.contains(StorageKey.THEME)) {
+      storage.set(StorageKey.THEME, ThemeMode.SYSTEM);
+    }
     api.defaults.baseURL = storage.getString(StorageKey.API_URL);
+    setAppIsReady(true);
   }, []);
 
   useEffect(() => {
@@ -73,7 +85,7 @@ export default function RootLayout() {
           <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
             <KeyboardProvider>
               <StatusBar />
-              <RootView theme={theme} isReady={fontLoaded} />
+              <RootView theme={theme} isReady={appIsReady && fontLoaded} />
             </KeyboardProvider>
           </ThemeProvider>
         </SseProvider>
