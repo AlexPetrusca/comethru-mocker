@@ -1,9 +1,3 @@
-# P1
-
-- StorageProvider is broken
-    - load AsyncStorage into it on init
-    - block the app from rendering until its ready
-
 # P2
 
 - Restarting mocker in Kubernetes causes it to lose all its data
