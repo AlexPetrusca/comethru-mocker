@@ -29,11 +29,9 @@ export function MessageThread({ messages, phoneNumber, onSendMessage }: MessageT
   const [messageBody, setMessageBody] = useState('');
 
   useEffect(() => {
-    if (scrollViewRef.current) {
-      setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
   }, [messages]);
 
   const handleSend = async () => {
@@ -65,6 +63,11 @@ export function MessageThread({ messages, phoneNumber, onSendMessage }: MessageT
       <KeyboardStickyView
         className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
         offset={{ closed: 0, opened: bottom }}
+        onLayout={(() => {
+          requestAnimationFrame(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: false });
+          });
+        })}
       >
         <SafeAreaView className="flex-row p-3 items-end" mode={"padding"} edges={['bottom']}>
           <TextInput
