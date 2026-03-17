@@ -59,12 +59,8 @@ export default function SettingsScreen() {
   };
 
   const handleSetTheme = async (theme: ThemeMode) => {
+    setColorScheme(theme);
     setStoredTheme(theme);
-    if (theme === ThemeMode.SYSTEM) {
-      setColorScheme('system');
-    } else {
-      setColorScheme(theme);
-    }
   };
 
   const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
