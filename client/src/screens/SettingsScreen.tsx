@@ -1,12 +1,13 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { Alert, Platform, Text, TextInput, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
+import { useMMKVString } from "react-native-mmkv";
 import { SymbolView } from 'expo-symbols';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from 'expo-router';
 import { api } from "@/src/services";
 import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
 import { brandColors, themeColors } from "@/src/constants/Colors";
-import { useMMKVString } from "react-native-mmkv";
+import { API_BASE_URL } from "@/src/services/api";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
@@ -82,7 +83,7 @@ export default function SettingsScreen() {
           className="singleline-textinput"
           value={apiUrl}
           onChangeText={setApiUrl}
-          placeholder={api.defaults.baseURL}
+          placeholder={API_BASE_URL}
           placeholderTextColor={brandColors.placeholder}
           autoCapitalize="none"
           autoCorrect={false}

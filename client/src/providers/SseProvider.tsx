@@ -14,11 +14,15 @@ const INITIAL_RETRY_DELAY = 1000; // 1 second
 export function SseProvider({ children }: { children: ReactNode }) {
   const { publish } = usePubSub();
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
+  const [apiUrl] = useMMKVString(StorageKey.API_URL);
   const [status, setStatus] = useState<SseStatus>('reconnecting');
   const esRef = useRef<EventSource<SseEvents> | null>(null);
   const retryDelay = useRef(INITIAL_RETRY_DELAY);
   const retryTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // todo: need to handle apiUrl changing
+  //  - close existing connection
+  //  - open new one
   const connect = () => {
     // Clean up existing connection
     if (esRef.current != null) {
@@ -27,7 +31,7 @@ export function SseProvider({ children }: { children: ReactNode }) {
     }
 
     const es = new EventSource<SseEvents>(
-      `${api.defaults.baseURL}/sse/subscribe?id=${encodeURIComponent(phoneNumber!)}`
+      `${apiUrl}/sse/subscribe?id=${encodeURIComponent(phoneNumber!)}`
     );
 
     esRef.current = es;
