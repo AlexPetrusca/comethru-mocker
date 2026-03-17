@@ -1,7 +1,7 @@
 import '@/src/global.css';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -16,6 +16,7 @@ import { NotificationProvider, PubSubProvider, SseProvider } from "@/src/provide
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { useNotifications } from "@/src/providers/NotificationProvider";
 import { storage } from "@/src/services/storage";
+import { useMMKVString } from "react-native-mmkv";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -75,6 +76,22 @@ export default function RootLayout() {
 
 function RootView({isReady}: {isReady: boolean}) {
   useNotifications();
+
+  const { colorScheme } = useNativeWindColorScheme();
+  const [ theme ] = useMMKVString(StorageKey.THEME);
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && isReady) {
+      requestAnimationFrame(() => {
+        const root = document.documentElement;
+        if (colorScheme === ThemeMode.DARK) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+      });
+    }
+  }, [isReady, colorScheme, theme]);
 
   if (!isReady) return null;
 
