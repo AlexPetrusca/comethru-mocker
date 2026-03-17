@@ -7,7 +7,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
+import { useColorScheme } from 'nativewind';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { api } from "@/src/services";
 import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
@@ -21,7 +21,7 @@ import { useMMKVString } from "react-native-mmkv";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, setColorScheme } = useNativeWindColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -77,7 +77,7 @@ export default function RootLayout() {
 function RootView({isReady}: {isReady: boolean}) {
   useNotifications();
 
-  const { colorScheme } = useNativeWindColorScheme();
+  const { colorScheme } = useColorScheme();
   const [ theme ] = useMMKVString(StorageKey.THEME);
 
   useEffect(() => {
