@@ -3,9 +3,9 @@ import { View, Text, FlatList, RefreshControl, TouchableOpacity } from 'react-na
 import { useRouter } from 'expo-router';
 import { ConversationListItem } from '@/src/components';
 import { messagesService, Conversation } from '@/src/services';
-import { useSubscription } from '@/src/providers';
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { useMMKVString } from "react-native-mmkv";
+import { useSubscription } from "@/src/providers/PubSubProvider";
 
 export default function ConversationsScreen() {
   const router = useRouter();

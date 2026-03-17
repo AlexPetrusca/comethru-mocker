@@ -3,9 +3,9 @@ import { ActivityIndicator, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { MessageThread } from '@/src/components';
 import { Message, messagesService } from '@/src/services';
-import { useSubscription } from '@/src/providers';
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { useMMKVString } from "react-native-mmkv";
+import { useSubscription } from "@/src/providers/PubSubProvider";
 
 export default function MessageThreadScreen() {
   const { otherParty } = useLocalSearchParams<{ otherParty: string }>();
