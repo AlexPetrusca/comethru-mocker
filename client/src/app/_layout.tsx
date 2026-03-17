@@ -7,27 +7,27 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'nativewind';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { api } from "@/src/services";
 import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
 import { API_BASE_URL } from "@/src/services/api";
-import { NotificationProvider, PubSubProvider, SseProvider } from "@/src/providers";
+import { NotificationProvider, PubSubProvider, SseProvider, ThemeProvider } from "@/src/providers";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { useNotifications } from "@/src/providers/NotificationProvider";
 import { storage } from "@/src/services/storage";
-import { useMMKVString } from "react-native-mmkv";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, setColorScheme } = useColorScheme();
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
+    // todo: We're init-ing storage on mount.
+    //  - What happens when providers try to read from storage?
+    //  - Race condition?
+
     // init mmkv storage
     if (!storage.contains(StorageKey.API_URL)) {
       storage.set(StorageKey.API_URL, API_BASE_URL);
@@ -40,7 +40,6 @@ export default function RootLayout() {
     }
 
     // init global state
-    setColorScheme(storage.getString(StorageKey.THEME) as "light" | "dark" | "system");
     api.defaults.baseURL = storage.getString(StorageKey.API_URL);
 
     setAppIsReady(true);
@@ -62,10 +61,10 @@ export default function RootLayout() {
     <PubSubProvider>
       <NotificationProvider>
         <SseProvider>
-          <ThemeProvider value={colorScheme === ThemeMode.DARK ? DarkTheme : DefaultTheme}>
+          <ThemeProvider>
             <KeyboardProvider>
               <StatusBar />
-              <RootView isReady={appIsReady && fontLoaded} />
+              <RootView appIsReady={appIsReady && fontLoaded} />
             </KeyboardProvider>
           </ThemeProvider>
         </SseProvider>
@@ -74,26 +73,10 @@ export default function RootLayout() {
   );
 }
 
-function RootView({isReady}: {isReady: boolean}) {
+function RootView({appIsReady}: {appIsReady: boolean}) {
   useNotifications();
 
-  const { colorScheme } = useColorScheme();
-  const [ theme ] = useMMKVString(StorageKey.THEME);
-
-  useEffect(() => {
-    if (Platform.OS === 'web' && isReady) {
-      requestAnimationFrame(() => {
-        const root = document.documentElement;
-        if (colorScheme === ThemeMode.DARK) {
-          root.classList.add('dark');
-        } else {
-          root.classList.remove('dark');
-        }
-      });
-    }
-  }, [isReady, colorScheme, theme]);
-
-  if (!isReady) return null;
+  if (!appIsReady) return null;
 
   return (
     <View className="flex-1 bg-white dark:bg-gray-900">

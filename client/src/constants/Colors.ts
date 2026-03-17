@@ -1,7 +1,15 @@
+import Theme from "@/src/constants/Theme";
+
+export interface ThemeColors {
+  navigationBackground: string;
+  navigationBorder: string;
+  headerTint: string;
+  tint: string;
+}
+
 // Centralized theme colors for navigation headers and tab bars
 // These are used in layout files where NativeWind classes can't be used
-
-export const themeColors = {
+export const themeColors: Record<Theme, ThemeColors> = {
   light: {
     navigationBackground: '#ffffff',
     navigationBorder: '#e5e5ea',

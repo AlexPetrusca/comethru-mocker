@@ -2,20 +2,19 @@ import React, { useState, useLayoutEffect } from 'react';
 import { Alert, Platform, Text, TextInput, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
 import { useMMKVString } from "react-native-mmkv";
 import { SymbolView } from 'expo-symbols';
-import { useColorScheme } from 'nativewind';
 import { useNavigation } from 'expo-router';
 import { api } from "@/src/services";
 import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
-import { brandColors, themeColors } from "@/src/constants/Colors";
+import { brandColors } from "@/src/constants/Colors";
 import { API_BASE_URL } from "@/src/services/api";
+import { useTheme } from "@/src/providers/ThemeProvider";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const { colorScheme, setColorScheme } = useColorScheme();
 
+  const { themeMode, themeColors, setThemeMode } = useTheme();
   const [storedApiUrl, setStoredApiUrl] = useMMKVString(StorageKey.API_URL);
   const [storedPhoneNumber, setStoredPhoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
-  const [theme, setStoredTheme] = useMMKVString(StorageKey.THEME);
 
   const [apiUrl, setApiUrl] = useState<string>(storedApiUrl!);
   const [phoneNumber, setPhoneNumber] = useState<string>(storedPhoneNumber!);
@@ -32,12 +31,12 @@ export default function SettingsScreen() {
               web: 'info',
             }}
             size={24}
-            tintColor={themeColors[colorScheme || ThemeMode.LIGHT].tint}
+            tintColor={themeColors.tint}
           />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, colorScheme]);
+  }, [navigation, themeColors]);
 
   const handleSavePhoneNumber = async () => {
     try {
@@ -58,10 +57,9 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleSetTheme = async (newTheme: ThemeMode) => {
-    if (newTheme === theme) return;
-    setColorScheme(newTheme);
-    setStoredTheme(newTheme);
+  const handleSetTheme = async (newThemeMode: ThemeMode) => {
+    if (newThemeMode === themeMode) return;
+    setThemeMode(newThemeMode);
   };
 
   const themeOptions: { value: ThemeMode; label: string; description: string }[] = [
@@ -117,18 +115,18 @@ export default function SettingsScreen() {
               key={option.value}
               className={`flex-row items-center justify-between p-4 ${
                 index !== themeOptions.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''
-              } ${theme === option.value ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}`}
+              } ${themeMode === option.value ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-white dark:bg-gray-800'}`}
               onPress={() => handleSetTheme(option.value)}
             >
               <View>
-                <Text className={`text-base font-semibold ${theme === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
+                <Text className={`text-base font-semibold ${themeMode === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
                   {option.label}
                 </Text>
                 <Text className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   {option.description}
                 </Text>
               </View>
-              {theme === option.value && (
+              {themeMode === option.value && (
                 <View className="w-5 h-5 rounded-full bg-blue-500 items-center justify-center">
                   <View className="w-2.5 h-2.5 rounded-full bg-white" />
                 </View>

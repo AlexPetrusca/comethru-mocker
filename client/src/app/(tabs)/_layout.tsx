@@ -2,29 +2,26 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { Tabs } from 'expo-router';
-import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
-import { themeColors } from '@/src/constants/Colors';
-import { ThemeMode } from "@/src/constants";
+import { useTheme } from "@/src/providers/ThemeProvider";
 
 export default function TabLayout() {
-  const { colorScheme } = useNativeWindColorScheme();
-  const theme = themeColors[colorScheme || ThemeMode.LIGHT];
+  const { themeColors } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.tint,
+        tabBarActiveTintColor: themeColors.tint,
         tabBarStyle: {
-          backgroundColor: theme.navigationBackground,
-          borderTopColor: theme.navigationBorder,
+          backgroundColor: themeColors.navigationBackground,
+          borderTopColor: themeColors.navigationBorder,
           paddingTop: Platform.OS === 'web' ? 10 : 0,
           paddingBottom: Platform.OS === 'web' ? 10 : 0,
           minHeight: Platform.OS === 'web' ? 72 : 'auto'
         },
         headerStyle: {
-          backgroundColor: theme.navigationBackground,
+          backgroundColor: themeColors.navigationBackground,
         },
-        headerTintColor: theme.headerTint,
+        headerTintColor: themeColors.headerTint,
       }}>
       <Tabs.Screen
         name="index"

@@ -47,6 +47,7 @@ public class SseService {
     }
 
     public void multicast(String id, String eventName, Object data) {
+        System.out.println("[SSE] Send to " + id);
         emitters.forEach((eId, list) -> {
             if (id.equals(eId)) {
                 list.forEach(emitter -> {

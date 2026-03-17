@@ -1,12 +1,11 @@
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import EventSource from 'react-native-sse';
-import { api } from "@/src/services";
+import { useMMKVString } from "react-native-mmkv";
 import { usePubSub } from "@/src/providers/PubSubProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
-import { useMMKVString } from "react-native-mmkv";
+import { SseStatus, SseStatusContext } from "@/src/providers/contexts/SseStatusContext";
 
 type SseEvents = 'message';
-export type SseStatus = 'connected' | 'disconnected' | 'reconnecting';
 
 const MAX_RETRY_DELAY = 30000; // 30 seconds
 const INITIAL_RETRY_DELAY = 1000; // 1 second
@@ -42,6 +41,7 @@ export function SseProvider({ children }: { children: ReactNode }) {
     });
 
     es.addEventListener('message', (e) => {
+      console.log(e);
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
     });
 
@@ -58,6 +58,7 @@ export function SseProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    console.log("[SSE] connecting...")
     connect();
 
     return () => {
@@ -74,5 +75,4 @@ export function SseProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export const SseStatusContext = React.createContext<SseStatus>('reconnecting');
 export const useSseStatus = () => useContext(SseStatusContext);
