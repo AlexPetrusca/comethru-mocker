@@ -4,23 +4,21 @@ import com.comethru.mocker.entity.Message;
 import com.comethru.mocker.service.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
+@RequiredArgsConstructor
 public class MessageController {
 
     private final MessageService messageService;
 
-    public MessageController(MessageService messageService) {
-        this.messageService = messageService;
-    }
-
     @PostMapping("/send")
     public ResponseEntity<Message> sendMessage(@RequestBody SendMessageRequest request) {
-        Message message = messageService.sendMessage(request.from(), request.to(), request.body());
+        Message message = messageService.sendMessageAndNotify(request.from(), request.to(), request.body());
         return ResponseEntity.created(URI.create("/messages/" + message.getId())).body(message);
     }
 

@@ -26,7 +26,7 @@ public class VerificationCodeService {
         VerificationCode verificationCode = new VerificationCode(to, code, EXPIRATION_MINUTES);
         verificationCodeRepository.save(verificationCode);
 
-        String messageBody = "Your ComeThru verification code is: " + code;
+        String messageBody = "ComeThru verification code: " + code;
         messageService.sendMessage(VERIFICATION_SENDER, to, messageBody);
 
         expoNotificationService.notifyNewMessage(to, "Verification Code", messageBody, VERIFICATION_SENDER);

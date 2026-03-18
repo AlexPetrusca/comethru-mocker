@@ -46,8 +46,12 @@ public class MessageService {
             sseService.multicast(from, "message", message);
         }
 
-        expoNotificationService.notifyNewMessage(to, "New message from " + from, body, from);
+        return message;
+    }
 
+    public Message sendMessageAndNotify(String from, String to, String body) {
+        Message message = sendMessage(from, to, body);
+        expoNotificationService.notifyNewMessage(to, "New message from " + from, body, from);
         return message;
     }
 
