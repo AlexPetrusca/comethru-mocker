@@ -14,16 +14,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState(colorScheme);
 
   useEffect(() => {
-    if (colorScheme !== 'light' && colorScheme !== 'dark') {
-      return; // ignore garbage values
+    // https://github.com/nativewind/nativewind/issues/1722
+    if (colorScheme !== Theme.LIGHT && colorScheme !== Theme.DARK) {
+      setColorScheme(theme === Theme.DARK ? Theme.LIGHT : Theme.DARK); // good lord...
+      setTimeout(() => {
+        setColorScheme(storedThemeMode as ThemeMode);
+      });
+      console.log("WTF: ", theme, storedThemeMode, colorScheme);
+      return;
     }
+
     setTheme(colorScheme);
   }, [colorScheme]);
 
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      setColorScheme(storage.getString(StorageKey.THEME) as "light" | "dark" | "system");
-    }
+    setColorScheme(storage.getString(StorageKey.THEME) as "light" | "dark" | "system");
   }, []);
 
   useEffect(() => {
@@ -40,8 +45,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme, storedThemeMode]);
 
   const setThemeMode = (themeMode: ThemeMode) => {
-    setStoredThemeMode(themeMode);
     setColorScheme(themeMode);
+    setStoredThemeMode(themeMode);
   };
 
   return (
