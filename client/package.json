@@ -10,6 +10,7 @@
     "desktop": "expo start --web --port 8091 --no-dev",
     "build-android": "eas build --profile development --platform android --local --output ./build/android.apk",
     "build-ios": "eas build --profile development-simulator --platform ios --local --output ./build/ios.tar.gz",
+    "build-ios-xcode": "npx expo prebuild",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
