@@ -19,5 +19,4 @@
 
 # Integration
 
-- ComeThru needs to route messages to mocker, then we’re done
 - Make iOS build without notification support, so I can put it on my iPhone
