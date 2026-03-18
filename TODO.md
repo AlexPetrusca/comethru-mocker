@@ -16,7 +16,3 @@
   - If we receive 3 messages while phone is locked, those notifications will sit in notification tray
   - When the user taps one or navigates to that specific chat, delete those old notifications so they don't clog up
 - Changing from Dark to Automatic theme on web makes the page to change theme but not the header and footer
-
-# Integration
-
-- Make iOS build without notification support, so I can put it on my iPhone
