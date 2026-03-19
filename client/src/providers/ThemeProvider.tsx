@@ -14,6 +14,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState(colorScheme);
 
   useEffect(() => {
+    setColorScheme(storage.getString(StorageKey.THEME) as ThemeMode);
+  }, []);
+
+  useEffect(() => {
     // https://github.com/nativewind/nativewind/issues/1722
     if (colorScheme !== Theme.LIGHT && colorScheme !== Theme.DARK) {
       setColorScheme(theme === Theme.DARK ? Theme.LIGHT : Theme.DARK); // good lord...
@@ -26,10 +30,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     setTheme(colorScheme);
   }, [colorScheme]);
-
-  useEffect(() => {
-    setColorScheme(storage.getString(StorageKey.THEME) as "light" | "dark" | "system");
-  }, []);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
