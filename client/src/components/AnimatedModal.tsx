@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Animated, Modal, Pressable, View } from 'react-native';
+import { Animated, Dimensions, Modal, Pressable, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 
@@ -10,6 +10,7 @@ interface AnimatedModalProps {
 }
 
 export function AnimatedModal({ isOpen, onRequestClose, children }: AnimatedModalProps) {
+  const { height } = Dimensions.get('screen');
   const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const translateY = useRef(new Animated.Value(800)).current;
@@ -66,7 +67,7 @@ export function AnimatedModal({ isOpen, onRequestClose, children }: AnimatedModa
         offset={{ closed: 0, opened: insets.bottom }}
       >
         <Animated.View
-          style={{ transform: [{ translateY }] }}
+          style={{ transform: [{ translateY }], paddingBottom: height, marginBottom: -height }}
           className="bg-white dark:bg-gray-800 rounded-t-2xl"
         >
           <View style={{ paddingBottom: insets.bottom }}>
