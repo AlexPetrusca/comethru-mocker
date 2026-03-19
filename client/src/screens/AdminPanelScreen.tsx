@@ -96,7 +96,7 @@ export default function AdminPanelScreen() {
         </TouchableOpacity>
       </View>
 
-      <StorageModal visible={showStorageModal} onRequestClose={() => setShowStorageModal(false)} />
+      <StorageModal isOpen={showStorageModal} onRequestClose={() => setShowStorageModal(false)} />
     </ScrollView>
   );
 }
