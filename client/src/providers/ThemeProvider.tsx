@@ -1,5 +1,6 @@
-import { ReactNode, useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { useColorScheme } from "nativewind";
+import { Appearance, AppState, useColorScheme as useColorSchemeNative } from "react-native";
 import { DarkTheme, DefaultTheme, ThemeProvider as RnThemeProvider } from '@react-navigation/native';
 import { ThemeContext } from "./contexts";
 import { StorageKey, Theme, ThemeMode } from "@/src/constants";
@@ -7,6 +8,16 @@ import { storage } from "@/src/services/storage";
 import { Platform } from "react-native";
 import { useMMKVString } from "react-native-mmkv";
 import { themeColors } from "@/src/constants/Colors";
+
+const _getColorScheme = Appearance.getColorScheme.bind(Appearance);
+let _lastValidScheme = _getColorScheme() ?? 'light';
+
+Appearance.getColorScheme = () => {
+  const scheme = _getColorScheme();
+  if (scheme == 'unspecified') return _lastValidScheme;
+  _lastValidScheme = scheme as any;
+  return scheme;
+};
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -18,16 +29,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // https://github.com/nativewind/nativewind/issues/1722
-    if (colorScheme !== Theme.LIGHT && colorScheme !== Theme.DARK) {
-      setColorScheme(theme === Theme.DARK ? Theme.LIGHT : Theme.DARK); // good lord...
-      setTimeout(() => {
-        setColorScheme(storedThemeMode as ThemeMode);
-      });
-      console.log("WTF: ", theme, storedThemeMode, colorScheme);
-      return;
-    }
-
     setTheme(colorScheme);
   }, [colorScheme]);
 
