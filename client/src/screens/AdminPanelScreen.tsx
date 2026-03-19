@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { PhoneDisplay } from '@/src/components';
+import { StorageModal } from '@/src/components/StorageModal';
 import { verificationService, messagesService } from '@/src/services';
 import { StorageKey, PhoneNumber } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
@@ -17,6 +18,7 @@ export default function AdminPanelScreen() {
     type: 'success' | 'error';
     message: string
   } | null>(null);
+  const [showStorageModal, setShowStorageModal] = useState(false);
 
   const handleSendVerification = async () => {
     try {
@@ -86,6 +88,15 @@ export default function AdminPanelScreen() {
           </Text>
         )}
       </View>
+
+      <View className="mb-6">
+        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Storage</Text>
+        <TouchableOpacity className="bg-blue-500 rounded-xl py-3.5 items-center mb-3" onPress={() => setShowStorageModal(true)}>
+          <Text className="text-white text-base font-semibold">View MMKV Storage</Text>
+        </TouchableOpacity>
+      </View>
+
+      <StorageModal visible={showStorageModal} onRequestClose={() => setShowStorageModal(false)} />
     </ScrollView>
   );
 }
