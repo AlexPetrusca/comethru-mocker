@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Animated, Modal, Pressable, View } from 'react-native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 
 interface AnimatedModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface AnimatedModalProps {
 }
 
 export function AnimatedModal({ isOpen, onRequestClose, children }: AnimatedModalProps) {
+  const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
   const translateY = useRef(new Animated.Value(800)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
@@ -58,16 +60,20 @@ export function AnimatedModal({ isOpen, onRequestClose, children }: AnimatedModa
       </Animated.View>
 
       {/* Sheet */}
-      <View className="flex-1 justify-end" pointerEvents="box-none">
+      <KeyboardStickyView
+        className="flex-1 justify-end"
+        pointerEvents="box-none"
+        offset={{ closed: 0, opened: insets.bottom }}
+      >
         <Animated.View
           style={{ transform: [{ translateY }] }}
-          className="bg-white dark:bg-gray-800 rounded-t-2xl max-h-[80%]"
+          className="bg-white dark:bg-gray-800 rounded-t-2xl"
         >
-          <SafeAreaView>
+          <View style={{ paddingBottom: insets.bottom }}>
             {children}
-          </SafeAreaView>
+          </View>
         </Animated.View>
-      </View>
+      </KeyboardStickyView>
     </Modal>
   );
 }
