@@ -1,7 +1,7 @@
 import '@/src/global.css';
 import 'react-native-reanimated';
 import { useEffect, useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -21,13 +21,9 @@ export default function RootLayout() {
   const [fontLoaded, error] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const [appIsReady, setAppIsReady] = useState(false);
+  const [appInitialized, setAppInitialized] = useState(false);
 
   useEffect(() => {
-    // todo: We're init-ing storage on mount.
-    //  - What happens when providers try to read from storage?
-    //  - Race condition?
-
     // init mmkv storage
     if (!storage.contains(StorageKey.API_URL)) {
       storage.set(StorageKey.API_URL, API_BASE_URL);
@@ -42,7 +38,7 @@ export default function RootLayout() {
     // init global state
     api.defaults.baseURL = storage.getString(StorageKey.API_URL);
 
-    setAppIsReady(true);
+    setAppInitialized(true);
   }, []);
 
   useEffect(() => {
@@ -57,6 +53,8 @@ export default function RootLayout() {
     }
   }, [error]);
 
+  if (!appInitialized) return null;
+
   return (
     <PubSubProvider>
       <NotificationProvider>
@@ -64,7 +62,7 @@ export default function RootLayout() {
           <ThemeProvider>
             <KeyboardProvider>
               <StatusBar />
-              <RootView appIsReady={appIsReady && fontLoaded} />
+              <RootView appIsReady={appInitialized && fontLoaded} />
             </KeyboardProvider>
           </ThemeProvider>
         </SseProvider>
