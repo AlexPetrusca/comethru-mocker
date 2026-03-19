@@ -52,20 +52,22 @@ export function AnimatedModal({ isOpen, onRequestClose, children }: AnimatedModa
       transparent
       onRequestClose={onRequestClose}
     >
-      <Animated.View style={{ flex: 1, opacity: backdropOpacity }}>
-        <Pressable className="flex-1 bg-black/50 justify-end" onPress={onRequestClose}>
-          <Animated.View
-            style={{ transform: [{ translateY }] }}
-            className="bg-white dark:bg-gray-800 rounded-t-2xl max-h-[80%]"
-          >
-            <SafeAreaView>
-              <Pressable onPress={() => {}}>
-                {children}
-              </Pressable>
-            </SafeAreaView>
-          </Animated.View>
-        </Pressable>
+      {/* Backdrop */}
+      <Animated.View style={{ opacity: backdropOpacity }} className="absolute inset-0">
+        <Pressable className="flex-1 bg-black/50" onPress={onRequestClose} />
       </Animated.View>
+
+      {/* Sheet */}
+      <View className="flex-1 justify-end" pointerEvents="box-none">
+        <Animated.View
+          style={{ transform: [{ translateY }] }}
+          className="bg-white dark:bg-gray-800 rounded-t-2xl max-h-[80%]"
+        >
+          <SafeAreaView>
+            {children}
+          </SafeAreaView>
+        </Animated.View>
+      </View>
     </Modal>
   );
 }

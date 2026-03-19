@@ -163,12 +163,16 @@ export function StorageModal({ isOpen, onRequestClose }: StorageModalProps) {
           <Text className="text-gray-500 dark:text-gray-400 text-center">No storage entries</Text>
         </View>
       ) : (
-        <FlatList
-          data={entries}
-          keyExtractor={(item) => item.key}
-          renderItem={renderEntry}
-          contentContainerClassName="p-4"
-        />
+        <View style={{ height: 250 }}>
+          <FlatList
+            data={entries}
+            keyExtractor={(item) => item.key}
+            renderItem={renderEntry}
+            contentContainerClassName="p-4"
+            style={{ flex: 1 }}
+            className="flex-1"
+          />
+        </View>
       )}
 
       {entries.length > 0 && (
