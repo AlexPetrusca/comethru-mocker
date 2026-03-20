@@ -169,8 +169,6 @@ export function StorageModal({ isOpen, onRequestClose }: StorageModalProps) {
             keyExtractor={(item) => item.key}
             renderItem={renderEntry}
             contentContainerClassName="p-4"
-            style={{ flex: 1 }}
-            className="flex-1"
           />
         </View>
       )}

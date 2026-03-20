@@ -10,7 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { api } from "@/src/services";
 import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
 import { API_BASE_URL } from "@/src/services/api";
-import { NotificationProvider, PubSubProvider, SseProvider, ThemeProvider } from "@/src/providers";
+import { NotificationProvider, PubSubProvider, SseProvider, SseLogProvider, ThemeProvider } from "@/src/providers";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { storage } from "@/src/services/storage";
 
@@ -57,14 +57,16 @@ export default function RootLayout() {
   return (
     <PubSubProvider>
       <NotificationProvider>
-        <SseProvider>
-          <ThemeProvider>
-            <KeyboardProvider>
-              <StatusBar />
-              <RootView appIsReady={fontLoaded} />
-            </KeyboardProvider>
-          </ThemeProvider>
-        </SseProvider>
+        <SseLogProvider>
+          <SseProvider>
+            <ThemeProvider>
+              <KeyboardProvider>
+                <StatusBar />
+                <RootView appIsReady={fontLoaded} />
+              </KeyboardProvider>
+            </ThemeProvider>
+          </SseProvider>
+        </SseLogProvider>
       </NotificationProvider>
     </PubSubProvider>
   );

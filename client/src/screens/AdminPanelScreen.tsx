@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AdminInfoDisplay } from '@/src/components';
 import { StorageModal } from '@/src/components/StorageModal';
+import { SseLogModal } from '@/src/components/SseLogModal';
 import { messagesService, verificationService } from '@/src/services';
 import { PhoneNumber, StorageKey } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
@@ -14,6 +15,7 @@ export default function AdminPanelScreen() {
   const [lastVerificationCode, setLastVerificationCode] = useMMKVString(StorageKey.LAST_VERIFICATION_CODE);
   const [verificationCode, setVerificationCode] = useState('');
   const [showStorageModal, setShowStorageModal] = useState(false);
+  const [showSseLogModal, setShowSseLogModal] = useState(false);
 
   const rawToken = pushToken?.match(/\[(\w+)\]/)?.[1];
 
@@ -80,7 +82,18 @@ export default function AdminPanelScreen() {
         </TouchableOpacity>
       </View>
 
+      <View className="mb-6">
+        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">SSE Events</Text>
+        <TouchableOpacity
+          className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
+          onPress={() => setShowSseLogModal(true)}
+        >
+          <Text className="text-white text-base font-semibold">View SSE Log</Text>
+        </TouchableOpacity>
+      </View>
+
       <StorageModal isOpen={showStorageModal} onRequestClose={() => setShowStorageModal(false)} />
+      <SseLogModal isOpen={showSseLogModal} onRequestClose={() => setShowSseLogModal(false)} />
     </ScrollView>
   );
 }

@@ -4,6 +4,7 @@ import { useMMKVString } from "react-native-mmkv";
 import { usePubSub } from "@/src/providers/PubSubProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { SseStatus, SseStatusContext } from "@/src/providers/contexts/SseStatusContext";
+import { useSseLog } from "@/src/providers/SseLogProvider";
 
 type SseEvents = 'message';
 
@@ -12,6 +13,7 @@ const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function SseProvider({ children }: { children: ReactNode }) {
   const { publish } = usePubSub();
+  const { addLog } = useSseLog();
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [apiUrl] = useMMKVString(StorageKey.API_URL);
   const [status, setStatus] = useState<SseStatus>('reconnecting');
@@ -37,16 +39,18 @@ export function SseProvider({ children }: { children: ReactNode }) {
 
     es.addEventListener('open', () => {
       setStatus('connected');
+      addLog('connection', { status: 'connected' });
       retryDelay.current = INITIAL_RETRY_DELAY; // reset backoff on success
     });
 
     es.addEventListener('message', (e) => {
-      console.log(e);
+      addLog('message', JSON.parse(e.data!));
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
     });
 
     es.addEventListener('error', () => {
       setStatus('reconnecting');
+      addLog('error', { status: 'reconnecting' });
       esRef.current?.close();
 
       // Exponential backoff
@@ -58,7 +62,6 @@ export function SseProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    console.log("[SSE] connecting...")
     connect();
 
     return () => {
