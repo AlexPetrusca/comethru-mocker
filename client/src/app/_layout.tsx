@@ -12,7 +12,6 @@ import { PhoneNumber, StorageKey, ThemeMode } from "@/src/constants";
 import { API_BASE_URL } from "@/src/services/api";
 import { NotificationProvider, PubSubProvider, SseProvider, ThemeProvider } from "@/src/providers";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
-import { useNotifications } from "@/src/providers/NotificationProvider";
 import { storage } from "@/src/services/storage";
 
 SplashScreen.preventAutoHideAsync();
@@ -62,7 +61,7 @@ export default function RootLayout() {
           <ThemeProvider>
             <KeyboardProvider>
               <StatusBar />
-              <RootView appIsReady={appInitialized && fontLoaded} />
+              <RootView appIsReady={fontLoaded} />
             </KeyboardProvider>
           </ThemeProvider>
         </SseProvider>
@@ -72,8 +71,6 @@ export default function RootLayout() {
 }
 
 function RootView({appIsReady}: {appIsReady: boolean}) {
-  useNotifications();
-
   if (!appIsReady) return null;
 
   return (

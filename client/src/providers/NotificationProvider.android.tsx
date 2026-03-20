@@ -11,7 +11,6 @@ import { pushTokenService } from "@/src/services/push-tokens";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldShowBanner: true,
     shouldShowList: true,
     shouldPlaySound: true,
@@ -26,7 +25,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const { publish } = usePubSub();
 
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
-  const [token, setToken] = useState<string | null>(null);
+  const [pushToken, setPushToken] = useState<string | null>(null);
   const [notification, setNotification] = useState<Notifications.Notification | null>(null);
 
   const notificationTap = Notifications.useLastNotificationResponse();
@@ -47,8 +46,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
 
     try {
-      const pushToken = await Notifications.getExpoPushTokenAsync();
-      return pushToken.data;
+      const expoPushToken = await Notifications.getExpoPushTokenAsync();
+      return expoPushToken.data;
     } catch (e) {
       console.warn('Failed to get push token:', e);
       return null;
@@ -63,7 +62,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     registerForPushNotifications().then(pushToken => {
       if (pushToken) {
-        setToken(pushToken);
+        setPushToken(pushToken);
         console.log('Register Push notification listener', pushToken, phoneNumber);
         pushTokenService.register(phoneNumber!);
       }
@@ -102,7 +101,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, [phoneNumber])
 
   return (
-    <NotificationContext.Provider value={{ token, notification, notificationTap }}>
+    <NotificationContext.Provider value={{ pushToken, notification, notificationTap }}>
       {children}
     </NotificationContext.Provider>
   );
