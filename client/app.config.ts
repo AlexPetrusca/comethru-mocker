@@ -1,0 +1,73 @@
+import { ExpoConfig, ConfigContext } from '@expo/config';
+import { withEntitlementsPlist } from "@expo/config-plugins";
+
+const withoutIosPushNotifications = (config: ExpoConfig): ExpoConfig => {
+  return withEntitlementsPlist(config, (mod) => {
+    delete mod.modResults['aps-environment'];
+    return mod;
+  });
+};
+
+export default ({ config }: ConfigContext): ExpoConfig => {
+  return withoutIosPushNotifications({
+    ...config,
+    name: "ComeThru Mocker",
+    slug: "comethru-mocker",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/images/icon.png",
+    scheme: "client",
+    userInterfaceStyle: "automatic",
+    splash: {
+      image: "./assets/images/splash-icon.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
+    },
+    ios: {
+      bundleIdentifier: "com.comethru.mocker",
+      googleServicesFile: "./GoogleService-Info.plist",
+      supportsTablet: true,
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
+    },
+    android: {
+      package: "com.comethru.mocker",
+      googleServicesFile: "./google-services.json",
+      softwareKeyboardLayoutMode: "pan",
+      adaptiveIcon: {
+        backgroundColor: "#E6F4FE",
+        foregroundImage: "./assets/images/android-icon-foreground.png",
+        backgroundImage: "./assets/images/android-icon-background.png",
+        monochromeImage: "./assets/images/android-icon-monochrome.png",
+      },
+      allowBackup: true,
+    },
+    web: {
+      bundler: "metro",
+      output: "static",
+      favicon: "./assets/images/favicon.png",
+      name: "ComeThru Mocker",
+      description: "SMS mocking client for development",
+    },
+    plugins: [
+      "expo-router",
+      "expo-web-browser",
+      ["expo-notifications", {
+        icon: "./assets/images/icon.png",
+        color: "#ffffff",
+        sounds: [],
+      }],
+    ],
+    experiments: {
+      typedRoutes: true,
+    },
+    extra: {
+      router: {},
+      eas: {
+        projectId: "8afc4cc4-1c6c-4d7c-b502-c13494ad65f3",
+      },
+    },
+    owner: "alexpetrusca",
+  });
+};
