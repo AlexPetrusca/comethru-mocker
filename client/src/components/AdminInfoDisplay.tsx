@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Clipboard } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 interface PhoneDisplayProps {
   phoneNumber: string;
@@ -10,8 +11,10 @@ interface PhoneDisplayProps {
 export function AdminInfoDisplay({ phoneNumber, pushToken, lastVerificationCode }: PhoneDisplayProps) {
   return (
     <View className="p-4 rounded-lg mb-4 bg-gray-100 dark:bg-gray-800">
-      <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Your Phone Number</Text>
-      <Text className="text-2xl font-semibold text-gray-900 dark:text-white">{phoneNumber}</Text>
+      <TouchableOpacity onPress={() => Clipboard.setString(phoneNumber)}>
+        <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Your Phone Number</Text>
+        <Text className="text-2xl font-semibold text-gray-900 dark:text-white">{phoneNumber}</Text>
+      </TouchableOpacity>
 
       {(pushToken || lastVerificationCode) && (
         <View className="mt-3 space-y-2">
