@@ -17,26 +17,27 @@ export function AdminInfoDisplay({ phoneNumber, pushToken, lastVerificationCode 
       </TouchableOpacity>
 
       {(pushToken || lastVerificationCode) && (
-        <View className="mt-3 space-y-2">
-          {pushToken && (
-            <TouchableOpacity onPress={() => Clipboard.setString(pushToken)} className="flex-row items-center">
-              <View className="flex-1 pb-2">
-                <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Push Token</Text>
-                <Text className="text-sm text-gray-700 dark:text-gray-300 break-all" numberOfLines={2} ellipsizeMode="tail">
-                  {pushToken}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          {lastVerificationCode && (
-            <TouchableOpacity onPress={() => Clipboard.setString(lastVerificationCode)} className="flex-row items-center">
-              <View className="flex-1">
-                <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Last Verification Code</Text>
-                <Text className="text-sm text-gray-700 dark:text-gray-300">{lastVerificationCode}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
+        <View className="mt-3 space-y-2" />
+      )}
+
+      {pushToken && (
+        <TouchableOpacity onPress={() => Clipboard.setString(pushToken)} className="flex-row items-center">
+          <View className="flex-1 pb-2">
+            <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Push Token</Text>
+            <Text className="text-sm text-gray-700 dark:text-gray-300 break-all" numberOfLines={2} ellipsizeMode="tail">
+              {pushToken}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
+      {lastVerificationCode && (
+        <TouchableOpacity onPress={() => Clipboard.setString(lastVerificationCode)} className="flex-row items-center">
+          <View className="flex-1">
+            <Text className="text-xs mb-1 text-gray-500 dark:text-gray-400">Last Verification Code</Text>
+            <Text className="text-sm text-gray-700 dark:text-gray-300">{lastVerificationCode}</Text>
+          </View>
+        </TouchableOpacity>
       )}
     </View>
   );

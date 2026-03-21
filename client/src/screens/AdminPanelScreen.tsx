@@ -84,15 +84,17 @@ export default function AdminPanelScreen() {
         </TouchableOpacity>
       </View>
 
-      <View className="mb-6">
-        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Notifications</Text>
-        <TouchableOpacity
-          className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
-          onPress={() => setShowNotificationLogModal(true)}
-        >
-          <Text className="text-white text-base font-semibold">View Notification Log</Text>
-        </TouchableOpacity>
-      </View>
+      {pushToken && (
+        <View className="mb-6">
+          <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Notifications</Text>
+          <TouchableOpacity
+            className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
+            onPress={() => setShowNotificationLogModal(true)}
+          >
+            <Text className="text-white text-base font-semibold">View Notification Log</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View className="mb-6">
         <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Storage</Text>

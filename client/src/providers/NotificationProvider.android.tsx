@@ -69,7 +69,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     registerForPushNotifications().then(pushToken => {
       if (pushToken) {
         setPushToken(pushToken);
-        addLog('token', { token: pushToken }, 'SUCCESS');
+        addLog('register token', { token: pushToken }, 'SUCCESS');
         console.log('Register Push notification listener', pushToken, phoneNumber);
         pushTokenService.register(phoneNumber!);
       }
