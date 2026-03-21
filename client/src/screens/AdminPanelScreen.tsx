@@ -4,7 +4,7 @@ import { AdminInfoDisplay } from '@/src/components';
 import { StorageModal } from '@/src/components/StorageModal';
 import { SseLogModal } from '@/src/components/SseLogModal';
 import { NotificationLogModal } from '@/src/components/NotificationLogModal';
-import { messagesService, verificationService } from '@/src/services';
+import { messagesService, verificationService, pushTokenService, sseService } from '@/src/services';
 import { PhoneNumber, StorageKey } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
 import { useMMKVString } from "react-native-mmkv";
@@ -48,6 +48,24 @@ export default function AdminPanelScreen() {
     }
   };
 
+  const handleSendSseDebug = async () => {
+    try {
+      await sseService.sendDebugEvent(phoneNumber!, 'debug', 'Debug SSE event');
+      Alert.alert('Success', 'Debug SSE event sent!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send debug SSE event');
+    }
+  };
+
+  const handleSendNotificationDebug = async () => {
+    try {
+      await pushTokenService.sendDebug(phoneNumber!, 'Debug Notification');
+      Alert.alert('Success', 'Debug notification sent!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send debug notification');
+    }
+  };
+
   return (
     <ScrollView className="flex-1 p-4 bg-white dark:bg-gray-900">
       <AdminInfoDisplay
@@ -82,6 +100,12 @@ export default function AdminPanelScreen() {
         >
           <Text className="text-white text-base font-semibold">View SSE Log</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-blue-100 dark:bg-blue-900/30 rounded-xl py-3.5 items-center mb-3"
+          onPress={handleSendSseDebug}
+        >
+          <Text className="text-blue-500 dark:text-blue-400 text-base font-semibold">Send Debug SSE Event</Text>
+        </TouchableOpacity>
       </View>
 
       {pushToken && (
@@ -92,6 +116,12 @@ export default function AdminPanelScreen() {
             onPress={() => setShowNotificationLogModal(true)}
           >
             <Text className="text-white text-base font-semibold">View Notification Log</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-blue-100 dark:bg-blue-900/30 rounded-xl py-3.5 items-center mb-3"
+            onPress={handleSendNotificationDebug}
+          >
+            <Text className="text-blue-500 dark:text-blue-400 text-base font-semibold">Send Debug Notification</Text>
           </TouchableOpacity>
         </View>
       )}

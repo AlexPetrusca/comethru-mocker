@@ -1,6 +1,8 @@
 export { api } from './api';
 export { messagesService } from './messages';
 export { verificationService } from './verification';
+export { pushTokenService } from './push-tokens';
+export { sseService } from './sse';
 export type {
   Message,
   Conversation,

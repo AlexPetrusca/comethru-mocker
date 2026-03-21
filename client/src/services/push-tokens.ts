@@ -11,7 +11,7 @@ export interface PushToken {
 export const pushTokenService = {
   async register(phoneNumber: string): Promise<void> {
     const token = await Notifications.getExpoPushTokenAsync();
-    await api.post('/push-tokens', {
+    await api.post('/notifications/push-tokens', {
       phoneNumber,
       token: token.data,
       platform: Platform.OS,
@@ -20,6 +20,16 @@ export const pushTokenService = {
 
   async unregister(): Promise<void> {
     const token = await Notifications.getExpoPushTokenAsync();
-    await api.delete(`/push-tokens/${encodeURIComponent(token.data)}`);
+    await api.delete(`/notifications/push-tokens/${encodeURIComponent(token.data)}`);
+  },
+
+  async sendDebug(phoneNumber: string, title: string, body?: string): Promise<void> {
+    await api.post('/notifications/debug', null, {
+      params: {
+        phoneNumber,
+        title,
+        body: body || 'This is a debug notification',
+      },
+    });
   },
 };

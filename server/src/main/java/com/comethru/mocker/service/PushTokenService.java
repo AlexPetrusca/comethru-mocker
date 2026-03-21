@@ -1,6 +1,6 @@
 package com.comethru.mocker.service;
 
-import com.comethru.mocker.controller.PushTokenController;
+import com.comethru.mocker.controller.NotificationController;
 import com.comethru.mocker.entity.PushToken;
 import com.comethru.mocker.repository.PushTokenRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class PushTokenService {
         this.pushTokenRepository = pushTokenRepository;
     }
 
-    public void registerToken(PushTokenController.PushTokenRequest request) {
+    public void registerToken(NotificationController.PushTokenRequest request) {
         PushToken pushToken = pushTokenRepository.findByToken(request.token())
                 .orElse(new PushToken());
 

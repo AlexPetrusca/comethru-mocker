@@ -5,6 +5,7 @@ import { usePubSub } from "@/src/providers/PubSubProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { SseStatus, SseStatusContext } from "@/src/providers/contexts/SseStatusContext";
 import { useLog } from "@/src/providers/LogProvider";
+import { sseService } from "@/src/services/sse";
 
 type SseEvents = 'message';
 
@@ -15,7 +16,6 @@ export function SseProvider({ children }: { children: ReactNode }) {
   const { publish } = usePubSub();
   const { addLog } = useLog('sse');
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
-  const [apiUrl] = useMMKVString(StorageKey.API_URL);
   const [status, setStatus] = useState<SseStatus>('reconnecting');
   const esRef = useRef<EventSource<SseEvents> | null>(null);
   const retryDelay = useRef(INITIAL_RETRY_DELAY);
@@ -31,9 +31,7 @@ export function SseProvider({ children }: { children: ReactNode }) {
       esRef.current.close();
     }
 
-    const es = new EventSource<SseEvents>(
-      `${apiUrl}/sse/subscribe?id=${encodeURIComponent(phoneNumber!)}`
-    );
+    const es = sseService.connect(phoneNumber!);
 
     esRef.current = es;
 
@@ -46,6 +44,12 @@ export function SseProvider({ children }: { children: ReactNode }) {
     es.addEventListener('message', (e) => {
       addLog('message', JSON.parse(e.data!), 'INFO');
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
+    });
+
+    es.addEventListener('debug', (e) => {
+      const data = JSON.parse(e.data!);
+      addLog('debug', data, 'INFO');
+      console.log('Debug SSE event:', data);
     });
 
     es.addEventListener('error', e => {
