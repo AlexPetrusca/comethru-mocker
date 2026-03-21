@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, FlatList, Alert, Platform } from 'react-native';
 import { AnimatedModal } from './AnimatedModal';
-import { useSseLog } from '@/src/providers/SseLogProvider';
+import { useLog } from '@/src/providers/LogProvider';
 
 interface SseLogModalProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface SseLogModalProps {
 }
 
 export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
-  const { logs, clearLogs } = useSseLog();
+  const { logs, clearLogs } = useLog('sse');
 
   const handleClear = () => {
     if (Platform.OS === 'web') {

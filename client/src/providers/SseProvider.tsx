@@ -4,7 +4,7 @@ import { useMMKVString } from "react-native-mmkv";
 import { usePubSub } from "@/src/providers/PubSubProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { SseStatus, SseStatusContext } from "@/src/providers/contexts/SseStatusContext";
-import { useSseLog } from "@/src/providers/SseLogProvider";
+import { useLog } from "@/src/providers/LogProvider";
 
 type SseEvents = 'message';
 
@@ -13,7 +13,7 @@ const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function SseProvider({ children }: { children: ReactNode }) {
   const { publish } = usePubSub();
-  const { addLog } = useSseLog();
+  const { addLog } = useLog('sse');
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [apiUrl] = useMMKVString(StorageKey.API_URL);
   const [status, setStatus] = useState<SseStatus>('reconnecting');
