@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Text, TouchableOpacity, View, FlatList, Alert, Platform } from 'react-native';
 import { AnimatedModal } from './AnimatedModal';
 import { useLog } from '@/src/providers/LogProvider';
@@ -10,6 +10,7 @@ interface NotificationLogModalProps {
 
 export function NotificationLogModal({ isOpen, onRequestClose }: NotificationLogModalProps) {
   const { logs, clearLogs } = useLog('notification');
+  const listRef = useRef<FlatList | null>(null);
 
   const handleClear = () => {
     if (Platform.OS === 'web') {
@@ -38,17 +39,13 @@ export function NotificationLogModal({ isOpen, onRequestClose }: NotificationLog
         <View className="flex-row items-center gap-2">
           <View
             className={`w-2 h-2 rounded-full ${
-              item.type === 'token' || item.type === 'registered'
+              item.level === 'SUCCESS'
                 ? 'bg-green-500'
-                : item.type === 'error'
+                : item.level === 'ERROR'
                   ? 'bg-red-500'
-                  : item.type === 'permission'
+                  : item.level === 'WARN'
                     ? 'bg-yellow-500'
-                    : item.type === 'received'
-                      ? 'bg-blue-500'
-                      : item.type === 'tapped'
-                        ? 'bg-purple-500'
-                        : 'bg-gray-400'
+                    : 'bg-gray-400'
             }`}
           />
           <Text className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
@@ -88,10 +85,16 @@ export function NotificationLogModal({ isOpen, onRequestClose }: NotificationLog
           </View>
         ) : (
             <FlatList
+              ref={listRef}
               data={logs}
               keyExtractor={(_, index) => index.toString()}
               renderItem={renderLog}
               contentContainerClassName="p-4"
+              onContentSizeChange={() => {
+                requestAnimationFrame(() => {
+                  listRef.current?.scrollToEnd({ animated: false });
+                });
+              }}
             />
         )}
       </View>

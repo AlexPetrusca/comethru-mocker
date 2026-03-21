@@ -40,21 +40,22 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
-      addLog('permission', { status });
+      addLog('permission', { status }, 'INFO');
     }
 
     if (finalStatus !== 'granted') {
       console.warn('Permission not granted for push notifications');
-      addLog('error', { message: 'Permission not granted' });
+      addLog('error', { message: 'Permission not granted' }, 'ERROR');
       return null;
     }
 
     try {
       const expoPushToken = await Notifications.getExpoPushTokenAsync();
+      addLog('token', { token: expoPushToken.data }, 'SUCCESS');
       return expoPushToken.data;
     } catch (e) {
       console.warn('Failed to get push token:', e);
-      addLog('error', { message: 'Failed to get push token', error: String(e) });
+      addLog('error', { message: 'Failed to get push token', error: String(e) }, 'ERROR');
       return null;
     }
   }
@@ -62,14 +63,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (IS_IOS_SIMULATOR) {
       console.warn('Push notifications not supported on iOS simulator');
-      addLog('error', { message: 'iOS simulator not supported' });
+      addLog('error', { message: 'iOS simulator not supported' }, 'ERROR');
       return;
     }
 
     registerForPushNotifications().then(pushToken => {
       if (pushToken) {
         setPushToken(pushToken);
-        addLog('token', { token: pushToken });
+        addLog('registered', { token: pushToken }, 'SUCCESS');
         console.log('Register Push notification listener', pushToken, phoneNumber);
         pushTokenService.register(phoneNumber!);
       }
@@ -81,7 +82,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         title: notification.request.content.title,
         body: notification.request.content.body,
         data: notification.request.content.data,
-      });
+      }, 'INFO');
       setNotification(notification);
       publish(PubSubEvent.NOTIFICATION_RECEIVED, notification);
     });
@@ -101,7 +102,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         body: notificationTap.notification.request.content.body,
         data: notificationTap.notification.request.content.data,
         actionIdentifier: notificationTap.actionIdentifier,
-      });
+      }, 'INFO');
 
       // Navigate to conversation if notification contains conversation data
       if (data?.type === 'conversation') {

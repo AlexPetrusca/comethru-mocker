@@ -10,11 +10,7 @@ interface SseLogModalProps {
 
 export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
   const { logs, clearLogs } = useLog('sse');
-
-  const listRef = useRef<FlatList>(null);
-  useEffect(() => {
-    listRef.current?.scrollToEnd({ animated: true });
-  }, [isOpen]);
+  const listRef = useRef<FlatList | null>(null);
 
   const handleClear = () => {
     if (Platform.OS === 'web') {
@@ -43,12 +39,12 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
         <View className="flex-row items-center gap-2">
           <View
             className={`w-2 h-2 rounded-full ${
-              item.type === 'message'
-                ? 'bg-blue-500'
-                : item.type === 'error'
+              item.level === 'SUCCESS'
+                ? 'bg-green-500'
+                : item.level === 'ERROR'
                   ? 'bg-red-500'
-                  : item.type === 'connection'
-                    ? 'bg-green-500'
+                  : item.level === 'WARN'
+                    ? 'bg-yellow-500'
                     : 'bg-gray-400'
             }`}
           />
@@ -94,6 +90,11 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
               keyExtractor={(_, index) => index.toString()}
               renderItem={renderLog}
               contentContainerClassName="p-4"
+              onContentSizeChange={() => {
+                requestAnimationFrame(() => {
+                  listRef.current?.scrollToEnd({ animated: false });
+                });
+              }}
             />
         )}
       </View>

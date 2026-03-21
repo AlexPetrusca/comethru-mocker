@@ -1,17 +1,18 @@
 import React, { ReactNode, useContext, useState, useCallback } from 'react';
-import { LogContext, LogContextType, LogEntry } from './contexts/LogContext';
+import { LogContext, LogContextType, LogEntry, LogLevel } from './contexts/LogContext';
 
 const MAX_LOG_ENTRIES = 50;
 
 export function LogProvider({ children }: { children: ReactNode }) {
   const [logs, setLogs] = useState<Record<string, LogEntry[]>>({});
 
-  const addLog = useCallback((key: string, type: string, data?: any) => {
+  const addLog = useCallback((key: string, type: string, data?: any, level: LogLevel = 'INFO') => {
     setLogs(prev => {
       const newLog: LogEntry = {
         timestamp: new Date(),
         type,
         data,
+        level,
       };
       const existingLogs = prev[key] || [];
       const updated = [...existingLogs, newLog];
@@ -55,7 +56,7 @@ export const useLog = (key: string) => {
   const context = useContext(LogContext);
   return {
     logs: context.getLogs(key),
-    addLog: (type: string, data?: any) => context.addLog(key, type, data),
+    addLog: (type: string, data?: any, level?: LogLevel) => context.addLog(key, type, data, level),
     clearLogs: () => context.clearLogs(key),
   };
 };

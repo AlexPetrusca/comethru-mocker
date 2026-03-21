@@ -39,18 +39,18 @@ export function SseProvider({ children }: { children: ReactNode }) {
 
     es.addEventListener('open', () => {
       setStatus('connected');
-      addLog('connection', { status: 'connected' });
+      addLog('connection', { status: 'connected' }, 'SUCCESS');
       retryDelay.current = INITIAL_RETRY_DELAY; // reset backoff on success
     });
 
     es.addEventListener('message', (e) => {
-      addLog('message', JSON.parse(e.data!));
+      addLog('message', JSON.parse(e.data!), 'INFO');
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
     });
 
     es.addEventListener('error', e => {
       setStatus('reconnecting');
-      addLog('error', { status: 'reconnecting', error: e });
+      addLog('error', { status: 'reconnecting', error: e }, 'ERROR');
       esRef.current?.close();
 
       // Exponential backoff
