@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useState, useCallback } from 'react';
-import { LogContext, LogContextType, LogEntry, LogLevel } from './contexts/LogContext';
+import { LogContext, LogEntry, LogLevel } from './contexts/LogContext';
 
 const MAX_LOG_ENTRIES = 50;
 

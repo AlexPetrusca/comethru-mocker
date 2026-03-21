@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { Text, TouchableOpacity, View, FlatList, Alert, Platform } from 'react-native';
+import React from 'react';
+import { Text, TouchableOpacity, View, Alert, Platform } from 'react-native';
 import { AnimatedModal } from './AnimatedModal';
+import { LogList } from './LogList';
 import { useLog } from '@/src/providers/LogProvider';
 
 interface SseLogModalProps {
@@ -10,7 +11,6 @@ interface SseLogModalProps {
 
 export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
   const { logs, clearLogs } = useLog('sse');
-  const listRef = useRef<FlatList | null>(null);
 
   const handleClear = () => {
     if (Platform.OS === 'web') {
@@ -33,37 +33,6 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
     }
   };
 
-  const renderLog = ({ item }: { item: any }) => (
-    <View className="border-b border-gray-200 dark:border-gray-700 py-2">
-      <View className="flex-row justify-between items-start mb-1">
-        <View className="flex-row items-center gap-2">
-          <View
-            className={`w-2 h-2 rounded-full ${
-              item.level === 'SUCCESS'
-                ? 'bg-green-500'
-                : item.level === 'ERROR'
-                  ? 'bg-red-500'
-                  : item.level === 'WARN'
-                    ? 'bg-yellow-500'
-                    : 'bg-gray-400'
-            }`}
-          />
-          <Text className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
-            {item.type}
-          </Text>
-        </View>
-        <Text className="text-xs text-gray-500 dark:text-gray-400">
-          {item.timestamp.toLocaleTimeString()}
-        </Text>
-      </View>
-      {item.data && (
-        <Text className="text-xs text-gray-600 dark:text-gray-400 font-mono break-all">
-          {typeof item.data === 'object' ? JSON.stringify(item.data, null, 2) : String(item.data)}
-        </Text>
-      )}
-    </View>
-  );
-
   return (
     <AnimatedModal isOpen={isOpen} onRequestClose={onRequestClose}>
       <View className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -79,24 +48,11 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
       </View>
 
       <View className="h-[430px]">
-        {logs.length === 0 ? (
-          <View className="p-8 items-center js">
-            <Text className="text-gray-500 dark:text-gray-400 text-center">No SSE events logged</Text>
-          </View>
-        ) : (
-            <FlatList
-              ref={listRef}
-              data={logs}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={renderLog}
-              contentContainerClassName="p-4"
-              onContentSizeChange={() => {
-                requestAnimationFrame(() => {
-                  listRef.current?.scrollToEnd({ animated: false });
-                });
-              }}
-            />
-        )}
+        <LogList
+          logs={logs}
+          emptyMessage="No SSE events logged"
+          autoScrollToBottom
+        />
       </View>
 
       {logs.length > 0 && (

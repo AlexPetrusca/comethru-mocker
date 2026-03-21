@@ -51,7 +51,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     try {
       const expoPushToken = await Notifications.getExpoPushTokenAsync();
-      addLog('token', { token: expoPushToken.data }, 'SUCCESS');
       return expoPushToken.data;
     } catch (e) {
       console.warn('Failed to get push token:', e);
@@ -70,7 +69,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     registerForPushNotifications().then(pushToken => {
       if (pushToken) {
         setPushToken(pushToken);
-        addLog('registered', { token: pushToken }, 'SUCCESS');
+        addLog('token', { token: pushToken }, 'SUCCESS');
         console.log('Register Push notification listener', pushToken, phoneNumber);
         pushTokenService.register(phoneNumber!);
       }
