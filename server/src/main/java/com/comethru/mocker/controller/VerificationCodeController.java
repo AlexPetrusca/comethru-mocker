@@ -2,6 +2,7 @@ package com.comethru.mocker.controller;
 
 import com.comethru.mocker.entity.VerificationCode;
 import com.comethru.mocker.service.VerificationCodeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,13 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/verification")
+@RequiredArgsConstructor
 public class VerificationCodeController {
 
     private final VerificationCodeService verificationCodeService;
-
-    public VerificationCodeController(VerificationCodeService verificationCodeService) {
-        this.verificationCodeService = verificationCodeService;
-    }
 
     @PostMapping("/send")
     public ResponseEntity<VerificationCodeResponse> sendVerificationCode(@RequestBody SendVerificationRequest request) {
@@ -34,11 +32,11 @@ public class VerificationCodeController {
         return ResponseEntity.ok(verificationCodeService.getVerificationCodesByRecipient(to));
     }
 
-    public record SendVerificationRequest(String to) { }
+    public record SendVerificationRequest(String to) {}
 
-    public record VerifyCodeRequest(String to, String code) { }
+    public record VerifyCodeRequest(String to, String code) {}
 
-    public record VerificationCodeResponse(String message, String to) { }
+    public record VerificationCodeResponse(String message, String to) {}
 
-    public record VerificationResultResponse(boolean valid, String message) { }
+    public record VerificationResultResponse(boolean valid, String message) {}
 }

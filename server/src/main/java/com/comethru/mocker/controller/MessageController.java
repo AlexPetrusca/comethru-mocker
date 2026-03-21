@@ -39,8 +39,8 @@ public class MessageController {
 
     @GetMapping("/between")
     public ResponseEntity<List<Message>> getMessagesBetween(
-            @RequestParam String from,
-            @RequestParam String to
+        @RequestParam String from,
+        @RequestParam String to
     ) {
         return ResponseEntity.ok(messageService.getMessagesBetween(from, to));
     }

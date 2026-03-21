@@ -1,6 +1,7 @@
 package com.comethru.mocker.controller;
 
 import com.comethru.mocker.service.SseService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -9,13 +10,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/sse")
+@RequiredArgsConstructor
 public class SseController {
 
     private final SseService sseService;
-
-    public SseController(SseService sseService) {
-        this.sseService = sseService;
-    }
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe(@RequestParam String id) {

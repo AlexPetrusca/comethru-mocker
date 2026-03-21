@@ -36,5 +36,5 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    public record PushTokenRequest(String phoneNumber, String token, String platform) { }
+    public record PushTokenRequest(String phoneNumber, String token, String platform) {}
 }

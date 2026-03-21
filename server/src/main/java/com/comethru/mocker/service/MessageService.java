@@ -34,8 +34,8 @@ public class MessageService {
 
     public List<Message> getMessagesBetween(String from, String to) {
         return messageRepository.findConversation(from, to).stream()
-                .sorted(Comparator.comparing(Message::getSentAt))
-                .toList();
+            .sorted(Comparator.comparing(Message::getSentAt))
+            .toList();
     }
 
     public Message sendMessage(String from, String to, String body) {
@@ -70,32 +70,32 @@ public class MessageService {
 
         // Group by the other party
         Map<String, List<Message>> conversations = relevantMessages.stream()
-                .collect(Collectors.groupingBy(m -> 
-                        m.getFrom().equals(phoneNumber) ? m.getTo() : m.getFrom()
-                ));
+            .collect(Collectors.groupingBy(m ->
+                m.getFrom().equals(phoneNumber) ? m.getTo() : m.getFrom()
+            ));
 
         // Build conversation summaries
         return conversations.entrySet().stream()
-                .map(entry -> {
-                    List<Message> messages = entry.getValue();
-                    Message latestMessage = messages.stream()
-                            .max(Comparator.comparing(Message::getSentAt))
-                            .orElseThrow();
-                    return new ConversationSummary(
-                            entry.getKey(),
-                            messages.size(),
-                            latestMessage.getBody(),
-                            latestMessage.getSentAt()
-                    );
-                })
-                .sorted(Comparator.comparing(ConversationSummary::lastMessageAt).reversed())
-                .toList();
+            .map(entry -> {
+                List<Message> messages = entry.getValue();
+                Message latestMessage = messages.stream()
+                    .max(Comparator.comparing(Message::getSentAt))
+                    .orElseThrow();
+                return new ConversationSummary(
+                    entry.getKey(),
+                    messages.size(),
+                    latestMessage.getBody(),
+                    latestMessage.getSentAt()
+                );
+            })
+            .sorted(Comparator.comparing(ConversationSummary::lastMessageAt).reversed())
+            .toList();
     }
 
     public record ConversationSummary(
-            String otherParty,
-            int messageCount,
-            String lastMessage,
-            Instant lastMessageAt
-    ) { }
+        String otherParty,
+        int messageCount,
+        String lastMessage,
+        Instant lastMessageAt
+    ) {}
 }

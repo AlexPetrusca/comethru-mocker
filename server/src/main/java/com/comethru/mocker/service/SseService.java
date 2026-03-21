@@ -53,8 +53,8 @@ public class SseService {
                 list.forEach(emitter -> {
                     try {
                         emitter.send(SseEmitter.event()
-                                .name(eventName)
-                                .data(data, MediaType.APPLICATION_JSON));
+                            .name(eventName)
+                            .data(data, MediaType.APPLICATION_JSON));
                     } catch (Exception e) {
                         list.remove(emitter);
                     }
@@ -68,8 +68,8 @@ public class SseService {
             list.forEach(emitter -> {
                 try {
                     emitter.send(SseEmitter.event()
-                            .name(eventName)
-                            .data(data, MediaType.APPLICATION_JSON));
+                        .name(eventName)
+                        .data(data, MediaType.APPLICATION_JSON));
                 } catch (IOException e) {
                     list.remove(emitter);
                 }

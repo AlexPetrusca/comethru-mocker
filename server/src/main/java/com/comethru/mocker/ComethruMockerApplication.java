@@ -11,5 +11,4 @@ public class ComethruMockerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ComethruMockerApplication.class, args);
 	}
-
 }

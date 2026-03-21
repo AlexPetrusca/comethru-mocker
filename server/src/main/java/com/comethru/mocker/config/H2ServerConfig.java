@@ -16,10 +16,10 @@ public class H2ServerConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server h2TcpServer() throws SQLException {
         return Server.createTcpServer(
-                "-tcp",
-                "-tcpAllowOthers",
-                "-tcpPort", String.valueOf(h2Port),
-                "-baseDir", "."
+            "-tcp",
+            "-tcpAllowOthers",
+            "-tcpPort", String.valueOf(h2Port),
+            "-baseDir", "."
         );
     }
 }
