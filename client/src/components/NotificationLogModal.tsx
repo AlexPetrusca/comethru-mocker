@@ -1,30 +1,25 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Text, TouchableOpacity, View, FlatList, Alert, Platform } from 'react-native';
 import { AnimatedModal } from './AnimatedModal';
 import { useLog } from '@/src/providers/LogProvider';
 
-interface SseLogModalProps {
+interface NotificationLogModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
 }
 
-export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
-  const { logs, clearLogs } = useLog('sse');
-
-  const listRef = useRef<FlatList>(null);
-  useEffect(() => {
-    listRef.current?.scrollToEnd({ animated: true });
-  }, [isOpen]);
+export function NotificationLogModal({ isOpen, onRequestClose }: NotificationLogModalProps) {
+  const { logs, clearLogs } = useLog('notification');
 
   const handleClear = () => {
     if (Platform.OS === 'web') {
-      if (window.confirm('Clear all SSE logs?')) {
+      if (window.confirm('Clear all notification logs?')) {
         clearLogs();
       }
     } else {
       Alert.alert(
         'Clear Logs',
-        'Are you sure you want to clear all SSE logs?',
+        'Are you sure you want to clear all notification logs?',
         [
           { text: 'Cancel', style: 'cancel' },
           {
@@ -43,13 +38,17 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
         <View className="flex-row items-center gap-2">
           <View
             className={`w-2 h-2 rounded-full ${
-              item.type === 'message'
-                ? 'bg-blue-500'
+              item.type === 'token' || item.type === 'registered'
+                ? 'bg-green-500'
                 : item.type === 'error'
                   ? 'bg-red-500'
-                  : item.type === 'connection'
-                    ? 'bg-green-500'
-                    : 'bg-gray-400'
+                  : item.type === 'permission'
+                    ? 'bg-yellow-500'
+                    : item.type === 'received'
+                      ? 'bg-blue-500'
+                      : item.type === 'tapped'
+                        ? 'bg-purple-500'
+                        : 'bg-gray-400'
             }`}
           />
           <Text className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">
@@ -72,7 +71,7 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
     <AnimatedModal isOpen={isOpen} onRequestClose={onRequestClose}>
       <View className="p-4 border-b border-gray-200 dark:border-gray-700">
         <View className="flex-row justify-between items-center">
-          <Text className="text-lg font-bold text-gray-900 dark:text-white">SSE Event Log</Text>
+          <Text className="text-lg font-bold text-gray-900 dark:text-white">Notification Log</Text>
           <TouchableOpacity onPress={onRequestClose}>
             <Text className="text-blue-500 text-base font-semibold">Done</Text>
           </TouchableOpacity>
@@ -85,11 +84,10 @@ export function SseLogModal({ isOpen, onRequestClose }: SseLogModalProps) {
       <View className="h-[430px]">
         {logs.length === 0 ? (
           <View className="p-8 items-center js">
-            <Text className="text-gray-500 dark:text-gray-400 text-center">No SSE events logged</Text>
+            <Text className="text-gray-500 dark:text-gray-400 text-center">No notification events logged</Text>
           </View>
         ) : (
             <FlatList
-              ref={listRef}
               data={logs}
               keyExtractor={(_, index) => index.toString()}
               renderItem={renderLog}

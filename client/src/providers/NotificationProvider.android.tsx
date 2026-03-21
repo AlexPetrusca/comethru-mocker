@@ -6,6 +6,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { NotificationContext } from "@/src/providers/contexts";
 import { usePubSub } from "@/src/providers/PubSubProvider";
+import { useLog } from "@/src/providers/LogProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { pushTokenService } from "@/src/services/push-tokens";
 
@@ -23,6 +24,7 @@ const IS_IOS_SIMULATOR = !Device.isDevice && Platform.OS === 'ios';
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { publish } = usePubSub();
+  const { addLog } = useLog('notification');
 
   const [phoneNumber] = useMMKVString(StorageKey.PHONE_NUMBER);
   const [pushToken, setPushToken] = useState<string | null>(null);
@@ -38,10 +40,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
+      addLog('permission', { status });
     }
 
     if (finalStatus !== 'granted') {
       console.warn('Permission not granted for push notifications');
+      addLog('error', { message: 'Permission not granted' });
       return null;
     }
 
@@ -50,6 +54,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       return expoPushToken.data;
     } catch (e) {
       console.warn('Failed to get push token:', e);
+      addLog('error', { message: 'Failed to get push token', error: String(e) });
       return null;
     }
   }
@@ -57,12 +62,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (IS_IOS_SIMULATOR) {
       console.warn('Push notifications not supported on iOS simulator');
+      addLog('error', { message: 'iOS simulator not supported' });
       return;
     }
 
     registerForPushNotifications().then(pushToken => {
       if (pushToken) {
         setPushToken(pushToken);
+        addLog('token', { token: pushToken });
         console.log('Register Push notification listener', pushToken, phoneNumber);
         pushTokenService.register(phoneNumber!);
       }
@@ -70,6 +77,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log('Notification', notification);
+      addLog('received', {
+        title: notification.request.content.title,
+        body: notification.request.content.body,
+        data: notification.request.content.data,
+      });
       setNotification(notification);
       publish(PubSubEvent.NOTIFICATION_RECEIVED, notification);
     });
@@ -83,6 +95,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (notificationTap != null) {
       console.log("Notification Tap:", notificationTap)
       const data = notificationTap.notification.request.content.data;
+
+      addLog('tapped', {
+        title: notificationTap.notification.request.content.title,
+        body: notificationTap.notification.request.content.body,
+        data: notificationTap.notification.request.content.data,
+        actionIdentifier: notificationTap.actionIdentifier,
+      });
 
       // Navigate to conversation if notification contains conversation data
       if (data?.type === 'conversation') {

@@ -3,6 +3,7 @@ import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'reac
 import { AdminInfoDisplay } from '@/src/components';
 import { StorageModal } from '@/src/components/StorageModal';
 import { SseLogModal } from '@/src/components/SseLogModal';
+import { NotificationLogModal } from '@/src/components/NotificationLogModal';
 import { messagesService, verificationService } from '@/src/services';
 import { PhoneNumber, StorageKey } from "@/src/constants";
 import { brandColors } from "@/src/constants/Colors";
@@ -16,6 +17,7 @@ export default function AdminPanelScreen() {
   const [verificationCode, setVerificationCode] = useState('');
   const [showStorageModal, setShowStorageModal] = useState(false);
   const [showSseLogModal, setShowSseLogModal] = useState(false);
+  const [showNotificationLogModal, setShowNotificationLogModal] = useState(false);
 
   const rawToken = pushToken?.match(/\[(\w+)\]/)?.[1];
 
@@ -73,16 +75,6 @@ export default function AdminPanelScreen() {
       </View>
 
       <View className="mb-6">
-        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Storage</Text>
-        <TouchableOpacity
-          className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
-          onPress={() => setShowStorageModal(true)}
-        >
-          <Text className="text-white text-base font-semibold">View MMKV Storage</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View className="mb-6">
         <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">SSE Events</Text>
         <TouchableOpacity
           className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
@@ -92,8 +84,29 @@ export default function AdminPanelScreen() {
         </TouchableOpacity>
       </View>
 
+      <View className="mb-6">
+        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Notifications</Text>
+        <TouchableOpacity
+          className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
+          onPress={() => setShowNotificationLogModal(true)}
+        >
+          <Text className="text-white text-base font-semibold">View Notification Log</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="mb-6">
+        <Text className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Storage</Text>
+        <TouchableOpacity
+          className="bg-blue-500 rounded-xl py-3.5 items-center mb-3"
+          onPress={() => setShowStorageModal(true)}
+        >
+          <Text className="text-white text-base font-semibold">View MMKV Storage</Text>
+        </TouchableOpacity>
+      </View>
+
       <StorageModal isOpen={showStorageModal} onRequestClose={() => setShowStorageModal(false)} />
       <SseLogModal isOpen={showSseLogModal} onRequestClose={() => setShowSseLogModal(false)} />
+      <NotificationLogModal isOpen={showNotificationLogModal} onRequestClose={() => setShowNotificationLogModal(false)} />
     </ScrollView>
   );
 }

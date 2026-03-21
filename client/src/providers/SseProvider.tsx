@@ -48,9 +48,9 @@ export function SseProvider({ children }: { children: ReactNode }) {
       publish(PubSubEvent.MESSAGE_RECEIVED, JSON.parse(e.data!));
     });
 
-    es.addEventListener('error', () => {
+    es.addEventListener('error', e => {
       setStatus('reconnecting');
-      addLog('error', { status: 'reconnecting' });
+      addLog('error', { status: 'reconnecting', error: e });
       esRef.current?.close();
 
       // Exponential backoff

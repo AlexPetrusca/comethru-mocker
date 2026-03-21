@@ -55,9 +55,9 @@ export default function RootLayout() {
   if (!appInitialized) return null;
 
   return (
-    <PubSubProvider>
-      <NotificationProvider>
-        <LogProvider>
+    <LogProvider>
+      <PubSubProvider>
+        <NotificationProvider>
           <SseProvider>
             <ThemeProvider>
               <KeyboardProvider>
@@ -66,13 +66,13 @@ export default function RootLayout() {
               </KeyboardProvider>
             </ThemeProvider>
           </SseProvider>
-        </LogProvider>
-      </NotificationProvider>
-    </PubSubProvider>
+        </NotificationProvider>
+      </PubSubProvider>
+    </LogProvider>
   );
 }
 
-function RootView({appIsReady}: {appIsReady: boolean}) {
+function RootView({ appIsReady }: { appIsReady: boolean }) {
   if (!appIsReady) return null;
 
   return (
