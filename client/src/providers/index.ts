@@ -1,5 +1,5 @@
 export { PubSubProvider } from './PubSubProvider';
 export { SseProvider } from './SseProvider';
-export { LogProvider, useLog } from './LogProvider';
+export { LogProvider } from './LogProvider';
 export { NotificationProvider } from './NotificationProvider';
 export { ThemeProvider } from './ThemeProvider';

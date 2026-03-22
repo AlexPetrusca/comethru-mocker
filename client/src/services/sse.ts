@@ -1,7 +1,7 @@
 import EventSource from 'react-native-sse';
 import { api } from './api';
 
-type SseEvents = 'message';
+export type SseEvents = 'message' | 'debug';
 
 export const sseService = {
   connect(phoneNumber: string): EventSource<SseEvents> {

@@ -5,9 +5,7 @@ import { usePubSub } from "@/src/providers/PubSubProvider";
 import { PubSubEvent, StorageKey } from "@/src/constants";
 import { SseStatus, SseStatusContext } from "@/src/providers/contexts/SseStatusContext";
 import { useLog } from "@/src/providers/LogProvider";
-import { sseService } from "@/src/services/sse";
-
-type SseEvents = 'message';
+import { SseEvents, sseService } from "@/src/services/sse";
 
 const MAX_RETRY_DELAY = 30000; // 30 seconds
 const INITIAL_RETRY_DELAY = 1000; // 1 second

@@ -13,6 +13,7 @@ import { API_BASE_URL } from "@/src/services/api";
 import { NotificationProvider, PubSubProvider, SseProvider, LogProvider, ThemeProvider } from "@/src/providers";
 import { SseStatusBanner } from "@/src/components/SseStatusBanner";
 import { storage } from "@/src/services/storage";
+import { useTheme } from "@/src/providers/ThemeProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -73,6 +74,8 @@ export default function RootLayout() {
 }
 
 function RootView({ appIsReady }: { appIsReady: boolean }) {
+  const { themeColors } = useTheme();
+
   if (!appIsReady) return null;
 
   return (
@@ -90,6 +93,10 @@ function RootView({ appIsReady }: { appIsReady: boolean }) {
           options={{
             title: 'Messages',
             headerBackTitle: 'Back',
+            headerStyle: {
+              backgroundColor: themeColors.navigationBackground,
+            },
+            headerTintColor: themeColors.headerTint,
           }}
         />
         <Stack.Screen
@@ -97,6 +104,10 @@ function RootView({ appIsReady }: { appIsReady: boolean }) {
           options={{
             title: 'New Message',
             presentation: 'modal',
+            headerStyle: {
+              backgroundColor: themeColors.navigationBackground,
+            },
+            headerTintColor: themeColors.headerTint,
           }}
         />
       </Stack>
